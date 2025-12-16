@@ -1,8 +1,5 @@
 node_modules
 .next
 .git
-.env
-.env.local
-*.md
-.DS_Store
-
+.env*
+*.db

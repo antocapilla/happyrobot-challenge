@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "happyrobot-challenge-collection",
 		"name": "HappyRobot Challenge API",
-		"description": "Colección de endpoints para el desafío de HappyRobot - Inbound Carrier Sales",
+		"description": "Endpoint collection for HappyRobot challenge - Inbound Carrier Sales",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -296,4 +296,6 @@
 		}
 	]
 }
+
+
 
