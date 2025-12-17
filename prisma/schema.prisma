@@ -1,52 +1,101 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
+// ============================================================================
+// Enums
+// ============================================================================
+
+enum CallOutcome {
+  booked_transfer
+  not_verified
+  no_load_found
+  negotiation_failed
+  not_interested
+  call_dropped
+}
+
+enum CallSentiment {
+  positive
+  neutral
+  negative
+}
+
+enum EquipmentType {
+  dry_van
+  reefer
+  flatbed
+  step_deck
+  double_drop
+  lowboy
+  other
+}
+
+// ============================================================================
+// Models
+// ============================================================================
+
 model Load {
-  id                String   @id @default(cuid())
-  load_id           String   @unique
+  id                String        @id @default(cuid())
+  load_id           String        @unique
   origin            String
   destination       String
   pickup_datetime   DateTime
   delivery_datetime DateTime
-  equipment_type    String
+  equipment_type    EquipmentType
   loadboard_rate    Float
-  notes             String
+  notes             String?       @default("")
   weight            Int
   commodity_type    String
   num_of_pieces     Int
   miles             Int
   dimensions        String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
+  // Relations
+  calls             Call[]
+
+  // Indexes
   @@index([equipment_type])
   @@index([origin])
   @@index([destination])
+  @@index([pickup_datetime])
+  @@index([delivery_datetime])
+  @@map("Load")
 }
 
 model Call {
-  id                 String   @id @default(cuid())
-  call_id            String   @unique
+  id                 String        @id @default(cuid())
+  call_id            String        @unique
   started_at         DateTime
-  transcript         String
-  outcome            String
-  sentiment          String
+  transcript         String?       @db.Text
+  outcome            CallOutcome
+  sentiment          CallSentiment
   mc_number          String?
-  load_id            String?
+  selected_load_id   String?
   initial_rate       Float?
-  agreed_rate        Float?
-  negotiation_rounds Int?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  final_rate         Float?
+  negotiation_rounds Int?          @default(0)
+  raw_extracted      Json?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
 
+  // Relations
+  selected_load      Load?         @relation(fields: [selected_load_id], references: [load_id], onDelete: SetNull)
+
+  // Indexes
   @@index([outcome])
   @@index([sentiment])
   @@index([started_at])
-  @@index([call_id])
+  @@index([outcome, started_at])
+  @@index([sentiment, started_at])
+  @@index([selected_load_id])
+  @@index([mc_number])
+  @@map("Call")
 }

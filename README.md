@@ -60,7 +60,7 @@ Header: `X-API-Key: happyrobot-api-key`
 | Endpoint | Description |
 |----------|-------------|
 | POST /api/verify-mc | Verify MC number |
-| POST /api/loads/search | Search loads |
+| GET /api/loads/search | Search loads |
 | GET /api/loads/list | List loads |
 | POST /api/pricing/evaluate | Evaluate pricing offer |
 | POST /api/calls/ingest | Save call |

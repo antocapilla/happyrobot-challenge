@@ -1,39 +1,36 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { db } from "@/server/db";
-import { CallInput } from "./types";
+import type { CallIngested } from "./schemas";
 import { ApiError } from "@/lib/errors";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 
-/**
- * Save or update a call using Prisma types for type safety.
- */
-export async function saveCall(call: CallInput): Promise<void> {
+export async function saveCall(call: CallIngested): Promise<void> {
   try {
-    // Common data for both create and update with explicit Prisma types
-    const commonData = {
-      started_at: new Date(call.started_at),
+    const writableFields = {
+      started_at: call.started_at,
       transcript: call.transcript,
       outcome: call.outcome,
       sentiment: call.sentiment,
-      mc_number: call.extracted.mc_number ?? null,
-      load_id: call.extracted.load_id ?? null,
-      initial_rate: call.extracted.initial_rate ?? null,
-      agreed_rate: call.extracted.agreed_rate ?? null,
-      negotiation_rounds: call.extracted.negotiation_rounds ?? null,
-    } satisfies Prisma.CallUpdateInput;
+      mc_number: call.mc_number,
+      selected_load_id: call.selected_load_id,
+      initial_rate: call.initial_rate,
+      final_rate: call.final_rate,
+      negotiation_rounds: call.negotiation_rounds,
+      raw_extracted: call.raw_extracted,
+    };
 
     await db.call.upsert({
       where: { call_id: call.call_id },
-      update: commonData,
       create: {
         call_id: call.call_id,
-        ...commonData,
-      } satisfies Prisma.CallCreateInput,
+        ...writableFields,
+      },
+      update: writableFields,
     });
 
-    revalidatePath("/api/calls");
+    revalidateTag("calls", "default");
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       throw new ApiError(500, `Database error: ${error.message}`);

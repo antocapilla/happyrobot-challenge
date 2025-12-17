@@ -52,7 +52,7 @@ export function CallTable({ calls, loading, onViewCall }: CallTableProps) {
             <TableHead className="font-semibold">Load ID</TableHead>
             <TableHead className="font-semibold">Outcome</TableHead>
             <TableHead className="font-semibold">Sentiment</TableHead>
-            <TableHead className="text-right font-semibold">Agreed Rate</TableHead>
+            <TableHead className="text-right font-semibold">Final Rate</TableHead>
             <TableHead className="text-right font-semibold">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -86,7 +86,7 @@ export function CallTable({ calls, loading, onViewCall }: CallTableProps) {
                 )}
               </TableCell>
               <TableCell className="font-mono text-sm">
-                {call.load_id || (
+                {call.selected_load_id || (
                   <span className="text-muted-foreground italic">-</span>
                 )}
               </TableCell>
@@ -101,9 +101,9 @@ export function CallTable({ calls, loading, onViewCall }: CallTableProps) {
                 </Badge>
               </TableCell>
               <TableCell className="text-right font-semibold">
-                {call.agreed_rate ? (
+                {call.final_rate ? (
                   <span className="text-green-600 dark:text-green-400">
-                    ${call.agreed_rate.toLocaleString()}
+                    ${call.final_rate.toLocaleString()}
                   </span>
                 ) : (
                   <span className="text-muted-foreground">-</span>

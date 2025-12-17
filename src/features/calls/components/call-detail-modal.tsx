@@ -67,7 +67,7 @@ async function copyToClipboard(text: string) {
 
 export function CallDetailModal({ call, open, onOpenChange }: CallDetailModalProps) {
   const [copied, setCopied] = useState(false);
-  const loadQuery = useLoad(call?.load_id);
+  const loadQuery = useLoad(call?.selected_load_id ?? null);
 
   const startedAt = useMemo(() => {
     if (!call?.started_at) return null;
@@ -77,8 +77,8 @@ export function CallDetailModal({ call, open, onOpenChange }: CallDetailModalPro
 
   const transcript = useMemo(() => call?.transcript?.trim() || "", [call?.transcript]);
   const rateChange = useMemo(
-    () => getRateChangePct(call?.initial_rate ?? null, call?.agreed_rate ?? null),
-    [call?.initial_rate, call?.agreed_rate]
+    () => getRateChangePct(call?.initial_rate ?? null, call?.final_rate ?? null),
+    [call?.initial_rate, call?.final_rate]
   );
 
   useEffect(() => {
@@ -139,7 +139,7 @@ export function CallDetailModal({ call, open, onOpenChange }: CallDetailModalPro
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Started at" value={startedAt ? startedAt.toLocaleString("en-US") : "—"} />
                   <Field label="MC Number" value={call.mc_number || "—"} mono={!!call.mc_number} />
-                  <Field label="Load ID" value={call.load_id || "—"} mono={!!call.load_id} />
+                  <Field label="Load ID" value={call.selected_load_id || "—"} mono={!!call.selected_load_id} />
                   <Field
                     label="Rounds"
                     value={
@@ -158,11 +158,11 @@ export function CallDetailModal({ call, open, onOpenChange }: CallDetailModalPro
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Initial rate" value={formatMoney(call.initial_rate)} />
                   <Field
-                    label="Agreed rate"
+                    label="Final rate"
                     value={
-                      call.agreed_rate !== null && call.agreed_rate !== undefined ? (
+                      call.final_rate !== null && call.final_rate !== undefined ? (
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">{formatMoney(call.agreed_rate)}</span>
+                          <span className="font-medium">{formatMoney(call.final_rate)}</span>
                           {rateChange !== null && (
                             <span
                               className={
@@ -185,11 +185,11 @@ export function CallDetailModal({ call, open, onOpenChange }: CallDetailModalPro
               </div>
             </div>
 
-            {call.load_id && (
+            {call.selected_load_id && (
               <div className="rounded-md border p-3">
                 <div className="flex items-center justify-between gap-3 mb-3">
                   <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Load</div>
-                  <div className="text-xs font-mono text-muted-foreground">{call.load_id}</div>
+                  <div className="text-xs font-mono text-muted-foreground">{call.selected_load_id}</div>
                 </div>
 
                 {loadQuery.isLoading && <div className="text-sm text-muted-foreground">Loading load…</div>}

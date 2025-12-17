@@ -14,12 +14,12 @@ interface CallFiltersProps {
 }
 
 const outcomes: CallOutcome[] = [
-  "deal_accepted",
-  "deal_rejected",
-  "no_match",
-  "carrier_ineligible",
-  "transfer_to_rep",
-  "abandoned",
+  "booked_transfer",
+  "not_verified",
+  "no_load_found",
+  "negotiation_failed",
+  "not_interested",
+  "call_dropped",
 ];
 
 const sentiments: CallSentiment[] = ["positive", "neutral", "negative"];

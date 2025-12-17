@@ -11,4 +11,3 @@ export interface PricingEvaluationResult {
   error: boolean;
   max_rounds: number;
 }
-

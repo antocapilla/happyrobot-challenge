@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
 
     const result = await getCalls(dbFilters);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       calls: result.calls,
       count: result.total,
       pagination: {
@@ -42,6 +42,9 @@ export async function GET(req: NextRequest) {
         hasMore: result.hasMore,
       },
     });
+
+    response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
+    return response;
   } catch (error) {
     return handleApiError(error);
   }

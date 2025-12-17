@@ -58,12 +58,12 @@ import {
  
 
 const OUTCOME_COLORS: Record<string, string> = {
-  deal_accepted: "#22c55e",
-  deal_rejected: "#ef4444",
-  no_match: "#eab308",
-  carrier_ineligible: "#f97316",
-  transfer_to_rep: "#3b82f6",
-  abandoned: "#6b7280",
+  booked_transfer: "#22c55e",
+  negotiation_failed: "#ef4444",
+  not_interested: "#ef4444",
+  no_load_found: "#eab308",
+  not_verified: "#f97316",
+  call_dropped: "#6b7280",
 };
 
 const SENTIMENT_COLORS: Record<string, string> = {
@@ -122,7 +122,7 @@ export default function DashboardPage() {
     };
   }, [period, customDateFrom, customDateTo]);
 
-  const { calls, total, isLoading, isError, error } = useCalls({
+  const { calls, total, isLoading } = useCalls({
     limit: 100,
     filters: {
       dateFrom: dateRange.dateFrom,
@@ -146,10 +146,10 @@ export default function DashboardPage() {
       };
     }
 
-    const accepted = calls.filter((c) => c.outcome === "deal_accepted");
-    const rejected = calls.filter((c) => c.outcome === "deal_rejected");
-    const withRevenue = accepted.filter((c) => c.agreed_rate && c.agreed_rate > 0);
-    const totalRevenue = accepted.reduce((sum, c) => sum + (c.agreed_rate || 0), 0);
+    const accepted = calls.filter((c) => c.outcome === "booked_transfer");
+    const rejected = calls.filter((c) => c.outcome === "negotiation_failed" || c.outcome === "not_interested");
+    const withRevenue = accepted.filter((c) => c.final_rate && c.final_rate > 0);
+    const totalRevenue = accepted.reduce((sum, c) => sum + (c.final_rate || 0), 0);
     const avgRate =
       withRevenue.length > 0
         ? totalRevenue / withRevenue.length
@@ -269,8 +269,8 @@ export default function DashboardPage() {
         groups[key] = { calls: 0, revenue: 0, date, label };
       }
       groups[key].calls += 1;
-      if (c.outcome === "deal_accepted" && c.agreed_rate) {
-        groups[key].revenue += c.agreed_rate;
+      if (c.outcome === "booked_transfer" && c.final_rate) {
+        groups[key].revenue += c.final_rate;
       }
     });
 
@@ -300,22 +300,6 @@ export default function DashboardPage() {
     );
   }
 
-  if (isError) {
-    return (
-      <div className="flex items-center justify-center min-h-[600px]">
-        <Card className="max-w-md">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-2">
-              <p className="text-destructive font-medium">Error loading data</p>
-              <p className="text-sm text-muted-foreground">
-                {error instanceof Error ? error.message : "Unknown error"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6 p-6">
@@ -650,8 +634,8 @@ export default function DashboardPage() {
                         )}
                       </TableCell>
                       <TableCell>
-                        {call.load_id ? (
-                          <span className="font-mono text-sm">{call.load_id}</span>
+                        {call.selected_load_id ? (
+                          <span className="font-mono text-sm">{call.selected_load_id}</span>
                         ) : (
                           <span className="text-muted-foreground text-sm">-</span>
                         )}
@@ -667,9 +651,9 @@ export default function DashboardPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        {call.agreed_rate ? (
+                        {call.final_rate ? (
                           <span className="font-semibold text-green-600">
-                            ${call.agreed_rate.toLocaleString()}
+                            ${call.final_rate.toLocaleString()}
                           </span>
                         ) : (
                           <span className="text-muted-foreground text-sm">-</span>

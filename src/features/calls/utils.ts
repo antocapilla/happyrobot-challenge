@@ -3,12 +3,12 @@ type SentimentBadgeVariant = "default" | "destructive" | "secondary";
 
 export function formatOutcome(outcome: string): string {
   const labels: Record<string, string> = {
-    deal_accepted: "Deal Accepted",
-    deal_rejected: "Deal Rejected",
-    no_match: "No Match",
-    carrier_ineligible: "Carrier Ineligible",
-    transfer_to_rep: "Transfer to Rep",
-    abandoned: "Abandoned",
+    booked_transfer: "Booked Transfer",
+    not_verified: "Not Verified",
+    no_load_found: "No Load Found",
+    negotiation_failed: "Negotiation Failed",
+    not_interested: "Not Interested",
+    call_dropped: "Call Dropped",
   };
   return labels[outcome] || outcome;
 }
@@ -23,12 +23,12 @@ export function formatSentiment(sentiment: string): string {
 }
 
 const OUTCOME_BADGE_VARIANTS: Record<string, OutcomeBadgeVariant> = {
-  deal_accepted: "default",
-  deal_rejected: "destructive",
-  no_match: "secondary",
-  carrier_ineligible: "outline",
-  transfer_to_rep: "secondary",
-  abandoned: "outline",
+  booked_transfer: "default",
+  negotiation_failed: "destructive",
+  not_interested: "destructive",
+  no_load_found: "secondary",
+  not_verified: "outline",
+  call_dropped: "outline",
 };
 
 export function getOutcomeBadgeVariant(outcome: string): OutcomeBadgeVariant {

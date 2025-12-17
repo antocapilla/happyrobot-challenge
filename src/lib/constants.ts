@@ -1,3 +1,5 @@
+import { callOutcomeSchema, callSentimentSchema } from "@/features/calls/schemas";
+
 export const API_CONFIG = {
   TIMEOUT: 5000,
 } as const;
@@ -8,13 +10,6 @@ export const PRICING_CONFIG = {
   BUFFER_PERCENTAGE: 0.12,
 } as const;
 
-export const CALL_OUTCOMES = [
-  "deal_accepted",
-  "deal_rejected",
-  "no_match",
-  "carrier_ineligible",
-  "transfer_to_rep",
-  "abandoned",
-] as const;
-
-export const CALL_SENTIMENTS = ["positive", "neutral", "negative"] as const;
+// Extract values from zod schemas to maintain single source of truth
+export const CALL_OUTCOMES = callOutcomeSchema.options;
+export const CALL_SENTIMENTS = callSentimentSchema.options;

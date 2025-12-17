@@ -3,7 +3,7 @@ import "server-only";
 import { db } from "@/server/db";
 import { Call, CallFilters, CallWhereInput, PaginationMeta } from "./types";
 import { ApiError } from "@/lib/errors";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -41,12 +41,16 @@ function buildWhereClause(filters?: CallFilters): CallWhereInput {
   }
 
   if (filters?.search) {
-    const searchTerm = filters.search;
-    where.OR = [
-      { call_id: { contains: searchTerm } },
-      { mc_number: { contains: searchTerm } },
-      { load_id: { contains: searchTerm } },
-    ];
+    const searchTerm = filters.search.trim();
+    if (searchTerm.length > 0) {
+      // Use contains for flexible search, but this can be slow on large datasets
+      // Consider adding full-text search indexes if this becomes a bottleneck
+      where.OR = [
+        { call_id: { contains: searchTerm, mode: "insensitive" } },
+        { mc_number: { contains: searchTerm, mode: "insensitive" } },
+        { selected_load_id: { contains: searchTerm, mode: "insensitive" } },
+      ];
+    }
   }
 
   return where;
@@ -84,8 +88,18 @@ export async function getCalls(filters?: CallFilters): Promise<GetCallsResult> {
     };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      // Check for timeout errors specifically
+      if (error.message.includes("timeout") || error.message.includes("timed out")) {
+        throw new ApiError(504, "Database query timeout");
+      }
       throw new ApiError(500, `Database error: ${error.message}`);
     }
+    
+    // Check for generic timeout errors
+    if (error instanceof Error && (error.message.includes("timeout") || error.message.includes("timed out"))) {
+      throw new ApiError(504, "Operation timeout");
+    }
+    
     throw new ApiError(500, "Failed to read calls data");
   }
 }

@@ -11,7 +11,12 @@ export async function withAuth(
   const auth = requireApiKey(req);
   if (!auth.valid) {
     return NextResponse.json(
-      { error: true, error_message: auth.error },
+      {
+        error: {
+          code: "UNAUTHORIZED",
+          message: auth.error || "Authentication required",
+        },
+      },
       { status: 401 }
     );
   }

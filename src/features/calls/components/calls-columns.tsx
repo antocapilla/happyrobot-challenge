@@ -66,10 +66,10 @@ export function getCallsColumns({ onViewCall }: CallsColumnsProps): ColumnDef<Ca
       },
     },
     {
-      accessorKey: "load_id",
+      accessorKey: "selected_load_id",
       header: "Load ID",
       cell: ({ row }) => {
-        const value = row.getValue("load_id") as string | null;
+        const value = row.getValue("selected_load_id") as string | null;
         return value ? (
           <span className="font-mono text-sm">{value}</span>
         ) : (
@@ -131,7 +131,7 @@ export function getCallsColumns({ onViewCall }: CallsColumnsProps): ColumnDef<Ca
       },
     },
     {
-      accessorKey: "agreed_rate",
+      accessorKey: "final_rate",
       header: ({ column }) => {
         return (
           <Button
@@ -139,13 +139,13 @@ export function getCallsColumns({ onViewCall }: CallsColumnsProps): ColumnDef<Ca
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="-ml-4"
           >
-            Agreed Rate
+            Final Rate
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
       },
       cell: ({ row }) => {
-        const value = row.getValue("agreed_rate") as number | null;
+        const value = row.getValue("final_rate") as number | null;
         return value ? (
           <span className="font-semibold text-green-600 dark:text-green-400">
             ${value.toLocaleString()}

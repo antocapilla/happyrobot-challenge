@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Call, CallsListResponse } from "./types";
 
 export const CALLS_QUERY_KEY = "calls";
@@ -40,7 +42,8 @@ async function fetchCalls(
 
   if (!res.ok) {
     const errorData = await res.json();
-    throw new Error(errorData.error_message || `HTTP error! status: ${res.status}`);
+    const errorMessage = errorData.error?.message || errorData.error_message || `HTTP error! status: ${res.status}`;
+    throw new Error(errorMessage);
   }
 
   return res.json();
@@ -51,7 +54,8 @@ async function fetchCall(callId: string): Promise<Call> {
 
   if (!res.ok) {
     const errorData = await res.json();
-    throw new Error(errorData.error_message || "Failed to fetch call");
+    const errorMessage = errorData.error?.message || errorData.error_message || "Failed to fetch call";
+    throw new Error(errorMessage);
   }
 
   const data = await res.json();
@@ -68,7 +72,21 @@ export function useCalls(options: UseCallsOptions = {}) {
     queryKey: [CALLS_QUERY_KEY, "list", { filters, page, limit }],
     queryFn: () => fetchCalls(filters, page, limit),
     enabled,
+    retry: false, // Don't retry on error - show error immediately
   });
+
+  // Show toast notification on error
+  useEffect(() => {
+    if (query.isError && query.error) {
+      const errorMessage = query.error instanceof Error 
+        ? query.error.message 
+        : "Error loading data";
+      toast.error("Error loading data", {
+        description: errorMessage,
+        duration: 5000,
+      });
+    }
+  }, [query.isError, query.error]);
 
   return {
     calls: query.data?.calls ?? [],
@@ -86,11 +104,27 @@ export function useCalls(options: UseCallsOptions = {}) {
  * Hook to fetch a single call by ID
  */
 export function useCall(callId: string | null) {
-  return useQuery({
+  const query = useQuery({
     queryKey: [CALLS_QUERY_KEY, "detail", callId],
     queryFn: () => fetchCall(callId!),
     enabled: !!callId,
+    retry: false,
   });
+
+  // Show toast notification on error
+  useEffect(() => {
+    if (query.isError && query.error) {
+      const errorMessage = query.error instanceof Error 
+        ? query.error.message 
+        : "Error loading call";
+      toast.error("Error loading call", {
+        description: errorMessage,
+        duration: 5000,
+      });
+    }
+  }, [query.isError, query.error]);
+
+  return query;
 }
 
 /**
@@ -106,6 +140,28 @@ export function usePrefetchCalls() {
       queryKey: [CALLS_QUERY_KEY, "list", { filters, page, limit }],
       queryFn: () => fetchCalls(filters, page, limit),
     });
+  };
+}
+
+/**
+ * Hook to invalidate all calls queries (triggers refetch)
+ */
+export function useInvalidateCalls() {
+  const queryClient = useQueryClient();
+
+  return () => {
+    queryClient.invalidateQueries({ queryKey: [CALLS_QUERY_KEY] });
+  };
+}
+
+/**
+ * Hook to reset calls cache completely (removes data)
+ */
+export function useResetCalls() {
+  const queryClient = useQueryClient();
+
+  return () => {
+    queryClient.resetQueries({ queryKey: [CALLS_QUERY_KEY] });
   };
 }
 

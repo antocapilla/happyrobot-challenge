@@ -5,4 +5,3 @@ export interface MCVerificationResult {
   error: boolean;
   error_message?: string;
 }
-

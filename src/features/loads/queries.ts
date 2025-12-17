@@ -3,7 +3,7 @@ import "server-only";
 import { db } from "@/server/db";
 import { Load, LoadSearchParams, LoadWhereInput } from "./types";
 import { ApiError } from "@/lib/errors";
-import { Prisma } from "@prisma/client";
+import { Prisma, EquipmentType } from "@/generated/prisma/client";
 
 /**
  * Get all loads with optional pagination.
@@ -31,7 +31,7 @@ export async function searchLoads(params: LoadSearchParams): Promise<Load[]> {
     const where: LoadWhereInput = {};
 
     if (params.equipment_type) {
-      where.equipment_type = params.equipment_type;
+      where.equipment_type = params.equipment_type as EquipmentType;
     }
 
     if (params.origin) {

@@ -37,5 +37,21 @@ services:
       retries: 3
       start_period: 40s
 
+  # Service to run database seed (use: docker-compose --profile seed run seed)
+  seed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: happyrobot-seed
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/happyrobot
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["sh", "-c", "bunx prisma migrate deploy && bunx tsx prisma/seed.ts"]
+    profiles:
+      - seed
+
 volumes:
   postgres_data:

@@ -1,27 +1,48 @@
 import { z } from "zod";
-import { CALL_OUTCOMES, CALL_SENTIMENTS } from "@/lib/constants";
 
-export const callOutcomeSchema = z.enum(CALL_OUTCOMES);
+export const callOutcomeSchema = z.enum([
+  "booked_transfer",
+  "not_verified",
+  "no_load_found",
+  "negotiation_failed",
+  "not_interested",
+  "call_dropped",
+]);
 
-export const callSentimentSchema = z.enum(CALL_SENTIMENTS);
+export const callSentimentSchema = z.enum(["positive", "neutral", "negative"]);
 
-export const callExtractedSchema = z.object({
-  mc_number: z.string().optional(),
-  load_id: z.string().optional(),
-  initial_rate: z.number().positive().optional().nullable(),
-  agreed_rate: z.number().positive().optional().nullable(),
-  negotiation_rounds: z.number().int().min(0).max(3).optional(),
-});
+const inputJsonValueSchema: z.ZodType<any> = z.lazy(() =>
+  z.union([
+    z.string(),
+    z.number(),
+    z.boolean(),
+    z.record(z.string(), z.lazy(() => z.union([inputJsonValueSchema, z.literal(null)]))),
+    z.array(z.lazy(() => z.union([inputJsonValueSchema, z.literal(null)]))),
+  ])
+);
 
-export const callSchema = z.object({
-  call_id: z.string().min(1, "Call ID is required"),
-  started_at: z.string().datetime("Invalid datetime format"),
-  transcript: z.string(),
+export const callIngestSchema = z.object({
+  call_id: z.string(),
+  started_at: z.string().datetime().transform((str) => new Date(str)),
+  transcript: z.string().optional().nullable().transform((val) => val ?? undefined),
   outcome: callOutcomeSchema,
   sentiment: callSentimentSchema,
-  extracted: callExtractedSchema,
+  mc_number: z.string().optional().nullable().transform((val) => val ?? null),
+  selected_load_id: z.string().optional().nullable().transform((val) => val ?? null),
+  initial_rate: z.number().optional().nullable().transform((val) => val ?? null),
+  final_rate: z.number().optional().nullable().transform((val) => val ?? null),
+  negotiation_rounds: z.number().int().optional().nullable().transform((val) => val ?? null),
+  raw_extracted: z.union([z.enum(["DbNull", "JsonNull"]), inputJsonValueSchema]).optional().transform((val) => {
+    if (val === "DbNull" || val === "JsonNull") return null;
+    return val;
+  }),
 });
 
+export type CallIngested = z.infer<typeof callIngestSchema>;
+
+/**
+ * Schema para queries de listado de calls
+ */
 export const listCallsQuerySchema = z.object({
   outcome: callOutcomeSchema.optional(),
   sentiment: callSentimentSchema.optional(),

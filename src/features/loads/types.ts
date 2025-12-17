@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
-import type { Load as PrismaLoad } from "@prisma/client";
+import { Prisma } from "@/generated/prisma/client";
+import type { Load as PrismaLoad } from "@/generated/prisma/client";
 import { loadSearchSchema } from "./schemas";
 
 // ============================================================================

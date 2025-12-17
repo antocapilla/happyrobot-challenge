@@ -15,7 +15,8 @@ async function fetchLoads(): Promise<LoadsListResponse> {
 
   if (!res.ok) {
     const errorData = await res.json();
-    throw new Error(errorData.error_message || `HTTP error! status: ${res.status}`);
+    const errorMessage = errorData.error?.message || errorData.error_message || `HTTP error! status: ${res.status}`;
+    throw new Error(errorMessage);
   }
 
   return res.json();
@@ -43,7 +44,8 @@ async function fetchLoad(loadId: string): Promise<Load> {
 
   if (!res.ok) {
     const errorData = await res.json();
-    throw new Error(errorData.error_message || "Failed to fetch load");
+    const errorMessage = errorData.error?.message || errorData.error_message || "Failed to fetch load";
+    throw new Error(errorMessage);
   }
 
   const data = await res.json();

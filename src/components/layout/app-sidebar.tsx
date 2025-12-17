@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Phone, Bot, Package, Settings, Plus } from "lucide-react";
+import { LayoutDashboard, Phone, Bot, Package, Settings } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -14,9 +15,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 
 const navigation = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -28,25 +28,20 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="border-b border-sidebar-border">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild tooltip="HappyRobot">
-              <Link href="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Bot className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">HappyRobot</span>
-                  <span className="truncate text-xs text-sidebar-foreground/70">
-                    Carrier Sales
-                  </span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+    <Sidebar>
+      <SidebarHeader>
+        <div className="flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+              <Bot className="size-4" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-semibold">HappyRobot</span>
+              <span className="text-xs text-sidebar-foreground/70">Carrier Sales</span>
+            </div>
+          </Link>
+          <SidebarTrigger />
+        </div>
       </SidebarHeader>
 
       <SidebarContent>
@@ -59,7 +54,6 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={pathname === item.url}
-                    tooltip={item.title}
                   >
                     <Link href={item.url}>
                       <item.icon className="size-4" />
@@ -73,24 +67,14 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <div className="mt-auto border-t border-sidebar-border">
-        <div className="p-2">
-          <Button 
-            variant="default"
-            className="w-full justify-start gap-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2"
-          >
-            <Plus className="size-4" />
-            <span className="group-data-[collapsible=icon]:hidden">Create New</span>
-          </Button>
-        </div>
-        <SidebarGroup className="border-t-0">
+      <SidebarFooter>
+        <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
                   isActive={pathname === "/settings"}
-                  tooltip="Settings"
                 >
                   <Link href="/settings">
                     <Settings className="size-4" />
@@ -101,9 +85,7 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-      </div>
-
-      <SidebarRail />
+      </SidebarFooter>
     </Sidebar>
   );
 }

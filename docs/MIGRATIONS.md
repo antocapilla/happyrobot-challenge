@@ -105,8 +105,45 @@ export DATABASE_URL="postgresql://..."
 bun run db:seed
 ```
 
+## Cleaning Data
+
+There are two professional ways to delete data:
+
+### Option 1: Clean Data Only (Recommended)
+
+Deletes all data but keeps the schema intact:
+
+```bash
+bun run db:clean
+```
+
+This:
+- Deletes all Calls and Loads
+- Keeps the database schema and migrations
+- Uses transactions for safety
+- Perfect for resetting test data without losing migrations
+
+### Option 2: Full Reset
+
+Completely resets the database (schema + data):
+
+```bash
+bun run db:reset
+```
+
+This:
+- Drops all tables
+- Reapplies all migrations from scratch
+- Runs seed automatically after reset
+- Use when you want a completely fresh start
+
+**When to use each:**
+- `db:clean`: When you just want fresh data, schema is fine
+- `db:reset`: When you've changed migrations and want to test from scratch
+
 ## Summary
 
 - **Development:** `bun run db:migrate` (creates and applies)
 - **Production:** Automatic on every deploy (`prisma migrate deploy`)
 - **Schema changes:** Modify `schema.prisma` → migrate → commit → push → automatic deploy
+- **Clean data:** `bun run db:clean` (keeps schema) or `bun run db:reset` (full reset)
