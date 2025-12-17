@@ -8,24 +8,24 @@ RUN npx prisma generate && npm run build
 FROM node:20-alpine
 WORKDIR /app
 ENV NODE_ENV=production
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
 
-# Instalar openssl para Prisma
-RUN apk add --no-cache openssl
-
+# Copiar app standalone
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+
+# Copiar prisma schema y cliente generado
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/tsx ./node_modules/tsx
-COPY --from=builder /app/node_modules/esbuild ./node_modules/esbuild
-COPY --from=builder /app/package.json ./
 
-# Script de inicio que sincroniza DB y arranca la app
-COPY --from=builder /app/scripts/start.sh ./start.sh
-RUN chmod +x ./start.sh
+# Copiar package.json para poder usar npm/npx
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 
 EXPOSE 3000
-CMD ["./start.sh"]
+
+# Ejecutar prisma directamente con node, luego iniciar servidor
+CMD ["sh", "-c", "node node_modules/prisma/build/index.js db push --skip-generate --accept-data-loss && node server.js"]

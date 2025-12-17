@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: happyrobot-app
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: happyrobot-db
+          property: connectionString
+      - key: API_KEY
+        sync: false  # Se configura manualmente en el dashboard
+    healthCheckPath: /
+    autoDeploy: true
+
+databases:
+  - name: happyrobot-db
+    databaseName: happyrobot
+    user: happyrobot
+    plan: free
+    postgresMajorVersion: 16
+
