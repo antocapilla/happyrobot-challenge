@@ -33,4 +33,8 @@ COPY --from=builder /app/src/lib ./src/lib
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "bunx prisma migrate deploy || (bunx prisma migrate resolve --rolled-back 20251217035350_init 2>/dev/null; bunx prisma migrate deploy) && bun server.js"]
+# Copy startup script
+COPY --from=builder /app/scripts/start.sh ./scripts/start.sh
+RUN chmod +x ./scripts/start.sh
+
+CMD ["./scripts/start.sh"]
