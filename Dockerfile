@@ -33,4 +33,4 @@ COPY --from=builder /app/src/lib ./src/lib
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "yes | bunx prisma migrate reset --skip-seed && bunx tsx prisma/seed.ts && bun server.js"]
+CMD ["sh", "-c", "bunx prisma migrate deploy || (bunx prisma migrate resolve --rolled-back 20251217035350_init 2>/dev/null; bunx prisma migrate deploy) && bun server.js"]
