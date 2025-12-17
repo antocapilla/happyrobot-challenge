@@ -14,9 +14,9 @@ ENV PORT=3000
 # Install wget for healthcheck
 RUN apk add --no-cache wget
 
-# Install production dependencies
+# Install dependencies (including dev dependencies for seed/clean scripts)
 COPY package.json bun.lockb* ./
-RUN bun install --frozen-lockfile --production
+RUN bun install --frozen-lockfile
 
 # Copy standalone app
 COPY --from=builder /app/public ./public
@@ -27,7 +27,10 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/src/generated ./src/generated
+# Copy source files needed for seed/clean scripts
+COPY --from=builder /app/src/server ./src/server
+COPY --from=builder /app/src/lib ./src/lib
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "bunx prisma migrate deploy && bun server.js"]
+CMD ["sh", "-c", "bunx prisma migrate deploy && bunx tsx prisma/clean.ts && bunx tsx prisma/seed.ts && bun server.js"]

@@ -45,6 +45,7 @@
     "recharts": "2.15.4",
     "server-only": "^0.0.1",
     "sonner": "^2.0.7",
+    "swagger-ui-react": "^5.31.0",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.2.0"
   },
@@ -54,6 +55,7 @@
     "@types/pg": "^8.16.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/swagger-ui-react": "^5.18.0",
     "@vitest/ui": "^2.1.9",
     "dotenv": "^17.2.3",
     "eslint": "^9",

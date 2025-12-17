@@ -65,3 +65,11 @@ Header: `X-API-Key: happyrobot-api-key`
 | POST /api/pricing/evaluate | Evaluate pricing offer |
 | POST /api/calls/ingest | Save call |
 | GET /api/calls/list | List calls |
+
+### API Documentation
+
+Interactive API documentation is available at `/api-docs` (e.g., `http://localhost:3000/api-docs`).
+
+The OpenAPI specification is available at `/api/openapi.json`.
+
+See [docs/API_DOCUMENTATION.md](./docs/API_DOCUMENTATION.md) for more details.

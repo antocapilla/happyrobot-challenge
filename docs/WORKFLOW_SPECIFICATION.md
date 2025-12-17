@@ -96,7 +96,7 @@ Collect a valid MC number, verify carrier eligibility via FMCSA, and handle all 
    - Ask the caller to repeat it clearly.
    - Retry up to 3 times.
    - If still invalid after 3 attempts:
-     - Set outcome = no_mc_provided.
+     - Set outcome = not_verified.
      - Call end_call to end the call politely.
 3. Call verify_mc_number(mc_number).
 4. If error == true:
@@ -104,11 +104,11 @@ Collect a valid MC number, verify carrier eligibility via FMCSA, and handle all 
    - Ask the caller to confirm the MC number once (digit by digit).
    - Call verify_mc_number(mc_number) one more time.
    - If it still errors:
-     - Set outcome = verification_error.
+     - Set outcome = not_verified.
      - Call end_call to end the call politely.
 5. If verified == false:
    - Briefly explain: "I'm sorry, but I'm not able to proceed with load booking for this MC number."
-   - Set outcome = ineligible_carrier.
+   - Set outcome = not_verified.
    - Call end_call to end the call politely.
 6. If verified == true:
    - Proceed to the next module (Load Search).
@@ -278,11 +278,11 @@ Search for loads, present them to the carrier, and handle their response (accept
    - Apologize briefly: "I'm having trouble searching for loads right now."
    - Retry search_loads once.
    - If it still errors:
-     - Set outcome = search_error.
+     - Set outcome = no_load_found.
      - Call end_call to end the call politely.
 5. If no loads are returned (loads array is empty):
    - Inform the carrier no loads are available matching their criteria.
-   - Set outcome = no_load_available.
+   - Set outcome = no_load_found.
    - Call end_call to end the call politely.
 6. If loads are found:
    - Select the best available load (prioritize by pickup date, rate, or match quality).
@@ -312,7 +312,7 @@ Search for loads, present them to the carrier, and handle their response (accept
        * Apologize briefly and retry once.
        * If it still errors, call end_call with outcome = negotiation_failed.
      - Follow the tool's decision:
-       * If decision == "accept": Call accept_load (transfers to sales rep)
+       * If decision == "accept": Set outcome = booked_transfer, call accept_load (transfers to sales rep)
        * If decision == "counter": Present the new counter_rate, route to **Module C (Negotiation)** for remaining rounds
        * If decision == "reject": Set outcome = negotiation_failed, call end_call
    - If decline (carrier rejects without negotiating):
@@ -373,14 +373,13 @@ Assistant: "Perfect. Let me confirm this load and connect you with a broker to f
 
 **Type:** Webhook Tool
 
-**Method:** POST
+**Method:** GET
 
 **URL:** `https://<your-api-host>/api/loads/search`
 
 **Headers:**
 ```
 x-api-key: <API_KEY>
-Content-Type: application/json
 ```
 
 **Description:**
@@ -390,23 +389,19 @@ Searches the load database for available loads matching carrier equipment and la
 - **Type:** AI - Let the agent generate the message
 - **Description:** "Let the carrier know you're searching for loads matching their criteria. Keep it brief."
 
-**Parameters:**
+**Query Parameters:**
 
 | Parameter | Type | Required | Description | Example |
 |-----------|------|----------|-------------|---------|
-| `equipment_type` | string | No | Type of equipment needed. Valid values only: `dry_van`, `reefer`, `flatbed`, `step_deck`, `double_drop`, `lowboy`, `other` | `"dry_van"` |
-| `origin` | string | No | Preferred origin city/state | `"Chicago, IL"` |
-| `destination` | string | No | Preferred destination city/state | `"Dallas, TX"` |
+| `equipment_type` | string | No | Type of equipment needed. Valid values only: `dry_van`, `reefer`, `flatbed`, `step_deck`, `double_drop`, `lowboy`, `other` | `dry_van` |
+| `origin` | string | No | Preferred origin city/state | `Chicago, IL` |
+| `destination` | string | No | Preferred destination city/state | `Dallas, TX` |
 
-**Note:** At least one parameter (equipment_type, origin, or destination) must be provided. The API will return an error if all are missing.
+**Note:** At least one query parameter (equipment_type, origin, or destination) must be provided. The API will return an error if all are missing.
 
-**Request Body:**
-```json
-{
-  "equipment_type": "@equipment_type",
-  "origin": "@origin",
-  "destination": "@destination"
-}
+**Example Request URL:**
+```
+https://<your-api-host>/api/loads/search?equipment_type=dry_van&origin=Chicago, IL&destination=Dallas, TX
 ```
 
 **Expected Response Schema:**
@@ -530,7 +525,7 @@ Continue negotiation for the remaining rounds (rounds 2 and 3, maximum <max_nego
 2. Parse each carrier response as: accept | reject | counter
 3. If accept:
    - Set final_rate = current_rate (or agreed rate from previous evaluate_counter_offer).
-   - Set outcome = deal_accepted.
+   - Set outcome = booked_transfer.
    - **MUST call accept_load** (transfer tool) with reason parameter containing load_id, rate, and mc_number.
    - This transfers the call directly to a sales rep - negotiation is complete.
 4. If reject without counter:
@@ -554,7 +549,7 @@ Continue negotiation for the remaining rounds (rounds 2 and 3, maximum <max_nego
    - Apologize briefly and retry once.
    - If it still errors, call end_call with outcome = negotiation_failed.
 8. Follow the tool's decision strictly:
-   - If decision == "accept": **MUST call accept_load** (transfers to sales rep)
+   - If decision == "accept": Set outcome = booked_transfer, **MUST call accept_load** (transfers to sales rep)
    - If decision == "counter": Present the new counter_rate from the tool, stay in Module C
    - If decision == "reject": Set outcome = negotiation_failed, **MUST call end_call**
 
@@ -907,14 +902,7 @@ If the call ended unexpectedly or was disconnected, classify it as call_dropped.
 - `not_interested`: Carrier declined without negotiating
 - `call_dropped`: Call ended unexpectedly or disconnected
 
-**Note:** Internal workflow outcomes (no_mc_provided, ineligible_carrier, verification_error, no_load_available, rejected, no_agreement, deal_accepted) should be mapped to these final outcomes:
-- `no_mc_provided` → `not_verified`
-- `ineligible_carrier` → `not_verified`
-- `verification_error` → `not_verified`
-- `no_load_available` → `no_load_found`
-- `rejected` → `not_interested`
-- `no_agreement` → `negotiation_failed`
-- `deal_accepted` → `booked_transfer`
+**Note:** Use these exact enum values throughout the workflow. Do not use internal values - always use the CallOutcome enum values directly.
 
 **Output Variable:**
 - `tag` (string): Selected outcome tag

@@ -4,6 +4,7 @@ import { QueryProvider } from "@/components/providers/query-provider";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Toaster } from "sonner";
+import { ConditionalLayout } from "@/components/layout/conditional-layout";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,10 +35,7 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-full overflow-hidden`}>
         <QueryProvider>
-          <SidebarProvider defaultOpen={false} className="h-svh">
-            <AppSidebar />
-            <SidebarInset className="h-full overflow-y-auto flex flex-col">{children}</SidebarInset>
-          </SidebarProvider>
+          <ConditionalLayout>{children}</ConditionalLayout>
         </QueryProvider>
         <Toaster position="top-right" richColors />
       </body>

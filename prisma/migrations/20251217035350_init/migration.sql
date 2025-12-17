@@ -20,24 +20,58 @@ CREATE TYPE "EquipmentType" AS ENUM ('dry_van', 'reefer', 'flatbed', 'step_deck'
 -- DropIndex
 DROP INDEX "Call_call_id_idx";
 
--- AlterTable
+-- AlterTable: Add new columns and modify existing ones
 ALTER TABLE "Call" DROP COLUMN "agreed_rate",
 DROP COLUMN "load_id",
 ADD COLUMN     "final_rate" DOUBLE PRECISION,
 ADD COLUMN     "raw_extracted" JSONB,
 ADD COLUMN     "selected_load_id" TEXT,
 ALTER COLUMN "transcript" DROP NOT NULL,
-DROP COLUMN "outcome",
-ADD COLUMN     "outcome" "CallOutcome" NOT NULL,
-DROP COLUMN "sentiment",
-ADD COLUMN     "sentiment" "CallSentiment" NOT NULL,
 ALTER COLUMN "negotiation_rounds" SET DEFAULT 0;
 
--- AlterTable
-ALTER TABLE "Load" DROP COLUMN "equipment_type",
-ADD COLUMN     "equipment_type" "EquipmentType" NOT NULL,
-ALTER COLUMN "notes" DROP NOT NULL,
+-- Update NULL values before changing column type
+UPDATE "Call" SET "outcome" = 'call_dropped' WHERE "outcome" IS NULL;
+UPDATE "Call" SET "sentiment" = 'neutral' WHERE "sentiment" IS NULL;
+
+-- Convert TEXT columns to ENUMs using a temporary column approach
+-- Step 1: Add temporary columns with enum type
+ALTER TABLE "Call" ADD COLUMN "outcome_new" "CallOutcome";
+ALTER TABLE "Call" ADD COLUMN "sentiment_new" "CallSentiment";
+
+-- Step 2: Copy and convert data (cast TEXT to enum)
+UPDATE "Call" SET "outcome_new" = "outcome"::"CallOutcome";
+UPDATE "Call" SET "sentiment_new" = "sentiment"::"CallSentiment";
+
+-- Step 3: Drop old columns and rename new ones
+ALTER TABLE "Call" DROP COLUMN "outcome";
+ALTER TABLE "Call" DROP COLUMN "sentiment";
+ALTER TABLE "Call" RENAME COLUMN "outcome_new" TO "outcome";
+ALTER TABLE "Call" RENAME COLUMN "sentiment_new" TO "sentiment";
+
+-- Step 4: Add NOT NULL constraint
+ALTER TABLE "Call" ALTER COLUMN "outcome" SET NOT NULL;
+ALTER TABLE "Call" ALTER COLUMN "sentiment" SET NOT NULL;
+
+-- AlterTable: Modify notes column
+ALTER TABLE "Load" ALTER COLUMN "notes" DROP NOT NULL,
 ALTER COLUMN "notes" SET DEFAULT '';
+
+-- Update NULL values before changing column type
+UPDATE "Load" SET "equipment_type" = 'other' WHERE "equipment_type" IS NULL;
+
+-- Convert TEXT column to ENUM using a temporary column approach
+-- Step 1: Add temporary column with enum type
+ALTER TABLE "Load" ADD COLUMN "equipment_type_new" "EquipmentType";
+
+-- Step 2: Copy and convert data (cast TEXT to enum)
+UPDATE "Load" SET "equipment_type_new" = "equipment_type"::"EquipmentType";
+
+-- Step 3: Drop old column and rename new one
+ALTER TABLE "Load" DROP COLUMN "equipment_type";
+ALTER TABLE "Load" RENAME COLUMN "equipment_type_new" TO "equipment_type";
+
+-- Step 4: Add NOT NULL constraint
+ALTER TABLE "Load" ALTER COLUMN "equipment_type" SET NOT NULL;
 
 -- CreateIndex
 CREATE INDEX "Call_outcome_idx" ON "Call"("outcome");
