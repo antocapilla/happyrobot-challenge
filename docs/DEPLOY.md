@@ -5,7 +5,7 @@
 ### 1. Subir cambios a GitHub
 
 ```bash
-git add render.yaml DEPLOY.md README.md
+git add render.yaml docs/DEPLOY.md README.md
 git commit -m "Add Render.com deployment config"
 git push
 ```
@@ -41,48 +41,24 @@ git push
 
 ## Migraciones de Base de Datos
 
-### ¿Cuándo se crea el schema?
+**Las migraciones se aplican automáticamente** en cada deploy. El Dockerfile ejecuta `prisma migrate deploy` antes de iniciar el servidor.
 
-El schema se crea automáticamente en el primer deploy mediante migraciones de Prisma.
-
-### Crear la primera migración (antes del primer deploy)
-
-**IMPORTANTE**: Debes crear la primera migración desde tu BD local antes de hacer el primer deploy:
+**Para crear la primera migración (antes del primer deploy):**
 
 ```bash
-# 1. Asegúrate de tener PostgreSQL corriendo localmente
-docker-compose up -d
-
-# 2. Configurar DATABASE_URL local
-export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/happyrobot"
-
-# 3. Crear la migración inicial desde tu schema actual
-npm run db:migrate -- --name init
+docker-compose up -d db
+bun run db:migrate -- --name init
+git add prisma/migrations/
+git commit -m "Add initial migration"
+git push
 ```
 
-Esto creará `prisma/migrations/` con el SQL necesario. **Commit y push** estos archivos antes del deploy.
-
-### ¿Cómo funcionan las migraciones?
-
-**En desarrollo (local):**
-- Modificas `prisma/schema.prisma`
-- Ejecutas `npm run db:migrate` (crea y aplica la migración)
-- Commit los cambios incluyendo `prisma/migrations/`
-
-**En producción (Render.com):**
-- Las migraciones se aplican **automáticamente** en cada deploy
-- El Dockerfile ejecuta `prisma migrate deploy` antes de iniciar el servidor
-- Solo aplica migraciones pendientes (no afecta las ya aplicadas)
-
-### Flujo completo de cambios al schema
+**Para cambiar el schema:**
 
 1. Modificar `prisma/schema.prisma`
-2. Ejecutar `npm run db:migrate` (en local)
+2. Ejecutar `bun run db:migrate` (en local)
 3. Commit cambios (incluyendo `prisma/migrations/`)
-4. Push a GitHub
-5. Render despliega automáticamente y aplica la migración
-
-Ver [docs/MIGRATIONS.md](./docs/MIGRATIONS.md) para más detalles.
+4. Push → Render despliega automáticamente
 
 ## Seed de datos (opcional)
 
@@ -91,7 +67,7 @@ Si necesitas datos de prueba:
 ```bash
 # Obtener DATABASE_URL del dashboard de Render (en la sección de la base de datos)
 export DATABASE_URL="postgresql://..." # Copiar desde Render
-npm run db:seed
+bun run db:seed
 ```
 
 ## URLs
@@ -103,10 +79,3 @@ npm run db:seed
 
 Render despliega automáticamente en cada push a `main` (o la rama que configures).
 
-## Ventajas vs Fly.io
-
-- Setup más simple (solo conectar repo)
-- Dashboard más intuitivo
-- PostgreSQL managed incluido
-- Auto-deploy desde Git
-- Plan gratuito generoso

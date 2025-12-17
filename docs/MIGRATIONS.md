@@ -19,7 +19,7 @@ docker-compose up -d
 export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/happyrobot"
 
 # 3. Crear la migración inicial desde tu schema actual
-npm run db:migrate -- --name init
+bun run db:migrate -- --name init
 ```
 
 Esto creará `prisma/migrations/YYYYMMDDHHMMSS_init/migration.sql` con todo tu schema actual.
@@ -34,7 +34,7 @@ Cuando modificas `prisma/schema.prisma`:
 
 ```bash
 # Crea la migración y la aplica automáticamente a tu BD local
-npm run db:migrate
+bun run db:migrate
 ```
 
 Esto:
@@ -56,7 +56,7 @@ Esto:
 ## Cambiar el Schema (flujo completo)
 
 1. **Modifica** `prisma/schema.prisma`
-2. **Ejecuta** `npm run db:migrate` (en local) - Prisma te pedirá un nombre descriptivo
+2. **Ejecuta** `bun run db:migrate` (en local) - Prisma te pedirá un nombre descriptivo
 3. **Verifica** que la migración funciona localmente
 4. **Commit** los cambios (incluyendo `prisma/migrations/`)
 5. **Push** a GitHub
@@ -67,7 +67,7 @@ Esto:
 ```bash
 # Cambias schema.prisma para añadir un campo nuevo
 # Luego:
-npm run db:migrate
+bun run db:migrate
 # Prisma pregunta: "Enter a name for the new migration:"
 # Respondes: "add_user_email_field"
 # Prisma crea: prisma/migrations/20240101120000_add_user_email_field/migration.sql
@@ -82,7 +82,7 @@ git push
 
 ```bash
 # Ver qué migraciones están aplicadas
-npx prisma migrate status
+bunx prisma migrate status
 ```
 
 ## Rollback (si es necesario)
@@ -90,7 +90,7 @@ npx prisma migrate status
 Prisma no tiene rollback automático. Si necesitas revertir:
 
 1. Modifica el schema para volver al estado anterior
-2. Crea una nueva migración: `npm run db:migrate`
+2. Crea una nueva migración: `bun run db:migrate`
 3. O restaura desde backup de la BD
 
 ## Seed de Datos
@@ -102,12 +102,12 @@ Para poblar datos iniciales en producción:
 export DATABASE_URL="postgresql://..."
 
 # Ejecutar seed
-npm run db:seed
+bun run db:seed
 ```
 
 ## Resumen
 
-- **Desarrollo**: `npm run db:migrate` (crea y aplica)
+- **Desarrollo**: `bun run db:migrate` (crea y aplica)
 - **Producción**: Automático en cada deploy (`prisma migrate deploy`)
 - **Schema changes**: Modificar `schema.prisma` → migrar → commit → push → deploy automático
 

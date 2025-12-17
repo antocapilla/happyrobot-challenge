@@ -9,6 +9,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+bun.lockb
 
 # testing
 /coverage
@@ -39,6 +40,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# lock files (usamos bun.lockb)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lock
 
 # prisma
 /lib/generated/prisma

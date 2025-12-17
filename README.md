@@ -2,48 +2,56 @@
 
 ## Stack
 - Next.js 16 + TypeScript + Prisma
-- PostgreSQL (Fly.io)
+- PostgreSQL
 - Docker
+
+## Setup Inicial (Primera Vez)
+
+```bash
+# 1. Levantar PostgreSQL
+docker-compose up -d db
+
+# 2. Crear archivo .env
+echo 'DATABASE_URL="postgresql://postgres:postgres@localhost:5432/happyrobot"' > .env
+echo 'API_KEY="happyrobot-api-key"' >> .env
+
+# 3. Instalar dependencias
+bun install
+
+# 4. Crear migración inicial
+bun run db:migrate -- --name init
+
+# 5. (Opcional) Poblar datos de prueba
+bun run db:seed
+```
+
+**IMPORTANTE**: Después del paso 3, commit y push la carpeta `prisma/migrations/`.
+
+## Desarrollo Local
+
+**Opción 1: Docker Compose (igual que producción)**
+```bash
+docker-compose up --build
+# App en http://localhost:3000
+```
+
+**Opción 2: Solo BD + Bun dev (más rápido para desarrollo)**
+```bash
+docker-compose up -d db
+bun run dev
+```
 
 ## Deploy
 
-### Render.com (Recomendado - Más simple)
+### Render.com (Recomendado)
 
 1. Conectar repo en [Render.com](https://render.com)
-2. Crear Blueprint desde `render.yaml` (o crear Web Service + PostgreSQL manualmente)
+2. Crear Blueprint desde `render.yaml`
 3. Configurar variable `API_KEY` en el dashboard
 4. Deploy automático en cada push
 
-Ver [DEPLOY.md](./DEPLOY.md) para detalles.
+Ver [docs/DEPLOY.md](./docs/DEPLOY.md) para detalles.
 
-### Alternativa: Docker Compose (local)
-
-```bash
-docker-compose up -d
-```
-
-## Seed (datos demo)
-
-```bash
-fly ssh console --app happyrobot-acapilla -C "npx tsx prisma/seed.ts"
-```
-
-## URLs
-
-- App: https://happyrobot-acapilla.fly.dev
-- API Key: `happyrobot-api-key`
-
-## Desarrollo local
-
-```bash
-docker-compose up -d
-echo 'DATABASE_URL="postgresql://postgres:postgres@localhost:5432/happyrobot"' > .env
-echo 'API_KEY="happyrobot-api-key"' >> .env
-npm install
-npx prisma db push
-npm run db:seed
-npm run dev
-```
 
 ## API
 
