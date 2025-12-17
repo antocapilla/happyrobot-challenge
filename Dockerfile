@@ -11,21 +11,19 @@ ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
+# Instalar dependencias de producción (incluye todas las de Prisma)
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev
+
 # Copiar app standalone
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Copiar prisma schema y cliente generado
+# Copiar prisma schema y migraciones (el cliente ya está en node_modules)
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-
-# Copiar package.json para poder usar npm/npx
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 
 EXPOSE 3000
 
-# Ejecutar prisma directamente con node, luego iniciar servidor
-CMD ["sh", "-c", "node node_modules/prisma/build/index.js db push --skip-generate --accept-data-loss && node server.js"]
+# Ejecutar migraciones y luego iniciar servidor
+CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]

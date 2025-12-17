@@ -39,6 +39,51 @@ git push
 - Al terminar, verás la URL (ej: `https://happyrobot-app.onrender.com`)
 - Probar la URL en el navegador
 
+## Migraciones de Base de Datos
+
+### ¿Cuándo se crea el schema?
+
+El schema se crea automáticamente en el primer deploy mediante migraciones de Prisma.
+
+### Crear la primera migración (antes del primer deploy)
+
+**IMPORTANTE**: Debes crear la primera migración desde tu BD local antes de hacer el primer deploy:
+
+```bash
+# 1. Asegúrate de tener PostgreSQL corriendo localmente
+docker-compose up -d
+
+# 2. Configurar DATABASE_URL local
+export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/happyrobot"
+
+# 3. Crear la migración inicial desde tu schema actual
+npm run db:migrate -- --name init
+```
+
+Esto creará `prisma/migrations/` con el SQL necesario. **Commit y push** estos archivos antes del deploy.
+
+### ¿Cómo funcionan las migraciones?
+
+**En desarrollo (local):**
+- Modificas `prisma/schema.prisma`
+- Ejecutas `npm run db:migrate` (crea y aplica la migración)
+- Commit los cambios incluyendo `prisma/migrations/`
+
+**En producción (Render.com):**
+- Las migraciones se aplican **automáticamente** en cada deploy
+- El Dockerfile ejecuta `prisma migrate deploy` antes de iniciar el servidor
+- Solo aplica migraciones pendientes (no afecta las ya aplicadas)
+
+### Flujo completo de cambios al schema
+
+1. Modificar `prisma/schema.prisma`
+2. Ejecutar `npm run db:migrate` (en local)
+3. Commit cambios (incluyendo `prisma/migrations/`)
+4. Push a GitHub
+5. Render despliega automáticamente y aplica la migración
+
+Ver [docs/MIGRATIONS.md](./docs/MIGRATIONS.md) para más detalles.
+
 ## Seed de datos (opcional)
 
 Si necesitas datos de prueba:
