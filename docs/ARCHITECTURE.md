@@ -7,13 +7,12 @@ This document describes the architecture and structure of the project following 
 ```
 src/
 ├── app/                    # Next.js App Router
-│   ├── (marketing)/        # Route groups for marketing (if applicable)
-│   ├── (app)/              # Route groups for authenticated app (if applicable)
-│   └── api/                # Route Handlers (public endpoints/webhooks)
-│       ├── calls/
-│       ├── loads/
-│       ├── pricing/
-│       └── verify-mc/
+│   ├── api/                # Route Handlers (public endpoints/webhooks)
+│   │   ├── calls/
+│   │   ├── loads/
+│   │   ├── pricing/
+│   │   └── verify-mc/
+│   └── ...                 # Pages and layouts
 │
 ├── features/               # Feature-first structure
 │   ├── calls/
@@ -28,15 +27,11 @@ src/
 │
 ├── server/                 # Server-only code
 │   ├── db.ts              # Prisma Client singleton
-│   ├── env.ts             # Environment variables validation
-│   └── server-only.ts     # Helper to ensure server-only
+│   └── env.ts             # Environment variables validation
 │
 └── lib/                    # Shared utilities
     ├── errors.ts          # Error handling
-    ├── middleware.ts      # Authentication middleware
-    ├── auth.ts            # Authentication logic
-    ├── types.ts           # Type re-exports (compatibility)
-    └── validation.ts     # Schema re-exports (compatibility)
+    └── ...
 ```
 
 ## Architecture Principles
@@ -70,7 +65,7 @@ export const db = globalForPrisma.prisma ?? new PrismaClient({...});
 ### 4. Validation with Zod
 
 All inputs are validated with Zod at boundaries:
-- Route Handlers: request body/query params validation
+- Route Handlers: body/query params validation
 - Server Actions: parameter validation
 
 ### 5. Cache Revalidation
@@ -80,6 +75,7 @@ After mutations (Server Actions), `revalidatePath` or `revalidateTag` is used to
 ## Data Flow
 
 ### Reads (Queries)
+
 ```
 Server Component / Route Handler
   → features/*/queries.ts
@@ -88,6 +84,7 @@ Server Component / Route Handler
 ```
 
 ### Writes (Actions)
+
 ```
 Client Component / Route Handler
   → features/*/actions.ts ("use server")
@@ -105,9 +102,9 @@ Environment variables are validated at startup using Zod (`src/server/env.ts`):
 
 ## Database Migrations
 
-- **Development**: `npm run db:migrate` (uses `prisma migrate dev`)
+- **Development**: `bun run db:migrate` (uses `prisma migrate dev`)
 - **Production**: `prisma migrate deploy` (in CI/CD pipeline)
-- **Seed**: `npm run db:seed` (optional in preview environments)
+- **Seed**: `bun run db:seed` (optional in preview environments)
 
 ## Implemented Best Practices
 
@@ -119,13 +116,3 @@ Environment variables are validated at startup using Zod (`src/server/env.ts`):
 ✅ Cache revalidation after mutations  
 ✅ Environment variables validated at startup  
 ✅ End-to-end typing with Prisma + Zod  
-
-## Recommended Next Steps
-
-- [ ] Migrate from SQLite to Postgres for production
-- [ ] Implement rate limiting in Route Handlers
-- [ ] Add observability (structured logs, Sentry)
-- [ ] Configure CI/CD with `prisma migrate deploy`
-- [ ] Add unit tests (Vitest) for services
-- [ ] Add E2E tests (Playwright) for critical flows
-- [ ] Consider Prisma Accelerate/Data Proxy if using serverless

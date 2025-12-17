@@ -1,28 +1,56 @@
-# Docker Compose - Desarrollo Local
+# Docker Guide
 
-Levanta todo igual que en producción:
+## Local Development
+
+Run everything the same as production:
 
 ```bash
-# Construir y levantar todo (BD + App)
+# Build and start everything (database + application)
 docker-compose up --build
 
-# En modo detached (background)
+# In detached mode (background)
 docker-compose up -d --build
 
-# Ver logs
+# View logs
 docker-compose logs -f app
 
-# Detener
+# Stop
 docker-compose down
 
-# Resetear BD (borra datos)
+# Reset database (deletes all data)
 docker-compose down -v
 ```
 
-**App disponible en:** http://localhost:3000
+**App available at:** http://localhost:3000
 
-**Nota:** Si solo quieres la BD y desarrollar con hot-reload:
+## Fast Development with Hot-Reload
+
+If you only want the database and develop with hot-reload:
+
 ```bash
+# Start database only
 docker-compose up -d db
+
+# Run app with Bun (automatic hot-reload)
 bun run dev
 ```
+
+## Useful Commands
+
+```bash
+# Check container status
+docker-compose ps
+
+# View logs for specific service
+docker-compose logs -f db
+
+# Restart a service
+docker-compose restart app
+
+# Rebuild without cache
+docker-compose build --no-cache
+```
+
+## Production
+
+For production, use Render.com (see [DEPLOY.md](./DEPLOY.md)). The Dockerfile is used automatically on Render.

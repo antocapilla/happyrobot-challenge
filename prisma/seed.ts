@@ -56,7 +56,7 @@ function generateTranscript(outcome: string, sentiment: string): string {
 async function main() {
   console.log("Seeding database...");
 
-  // Seed loads
+  // Seed loads using transaction for better performance
   const loads = [
     { load_id: "LD-1023", origin: "Dallas, TX", destination: "Atlanta, GA", pickup_datetime: new Date("2025-12-16T09:00:00Z"), delivery_datetime: new Date("2025-12-17T17:00:00Z"), equipment_type: "dry_van", loadboard_rate: 2200, notes: "FCFS pickup", weight: 32000, commodity_type: "general freight", num_of_pieces: 18, miles: 780, dimensions: "48ft" },
     { load_id: "LD-1024", origin: "Chicago, IL", destination: "Denver, CO", pickup_datetime: new Date("2025-12-16T08:00:00Z"), delivery_datetime: new Date("2025-12-18T14:00:00Z"), equipment_type: "reefer", loadboard_rate: 3500, notes: "Temperature controlled", weight: 42000, commodity_type: "food products", num_of_pieces: 24, miles: 920, dimensions: "53ft" },
@@ -65,15 +65,18 @@ async function main() {
     { load_id: "LD-1027", origin: "Seattle, WA", destination: "Portland, OR", pickup_datetime: new Date("2025-12-16T12:00:00Z"), delivery_datetime: new Date("2025-12-16T18:00:00Z"), equipment_type: "dry_van", loadboard_rate: 1200, notes: "Local delivery", weight: 22000, commodity_type: "general freight", num_of_pieces: 15, miles: 175, dimensions: "48ft" },
   ];
 
-  for (const load of loads) {
-    await db.load.upsert({ where: { load_id: load.load_id }, update: load, create: load });
-  }
+  await db.$transaction(
+    loads.map((load) =>
+      db.load.upsert({ where: { load_id: load.load_id }, update: load, create: load })
+    )
+  );
   console.log(`Seeded ${loads.length} loads`);
 
-  // Seed calls
+  // Seed calls using transaction for better performance
   const startDate = new Date("2025-12-01T00:00:00Z");
   const endDate = new Date("2025-12-20T23:59:59Z");
 
+  const calls = [];
   for (let i = 0; i < 200; i++) {
     const outcome = randomElement([...CALL_OUTCOMES]);
     const sentiment = randomElement([...CALL_SENTIMENTS]);
@@ -104,8 +107,12 @@ async function main() {
       negotiation_rounds,
     };
 
-    await db.call.upsert({ where: { call_id: call.call_id }, update: call, create: call });
+    calls.push(
+      db.call.upsert({ where: { call_id: call.call_id }, update: call, create: call })
+    );
   }
+
+  await db.$transaction(calls);
   console.log("Seeded 200 calls");
 }
 

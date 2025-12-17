@@ -6,12 +6,14 @@ import { ApiError } from "@/lib/errors";
 import { Prisma } from "@prisma/client";
 
 /**
- * Get all loads.
+ * Get all loads with optional pagination.
  */
-export async function getLoads(): Promise<Load[]> {
+export async function getLoads(options?: { limit?: number; skip?: number }): Promise<Load[]> {
   try {
     return await db.load.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: "desc" } satisfies Prisma.LoadOrderByWithRelationInput,
+      take: options?.limit,
+      skip: options?.skip,
     });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -42,7 +44,7 @@ export async function searchLoads(params: LoadSearchParams): Promise<Load[]> {
 
     const loads = await db.load.findMany({
       where,
-      orderBy: { loadboard_rate: "desc" },
+      orderBy: { loadboard_rate: "desc" } satisfies Prisma.LoadOrderByWithRelationInput,
     });
 
     return loads.sort((a, b) => {

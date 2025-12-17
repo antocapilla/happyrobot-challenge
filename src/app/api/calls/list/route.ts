@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { handleApiError } from "@/lib/errors";
 import { listCallsQuerySchema } from "@/features/calls/schemas";
 import { getCalls } from "@/features/calls/queries";
+import { CallFilters } from "@/features/calls/types";
 
 export async function GET(req: NextRequest) {
   try {
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
 
     const filters = listCallsQuerySchema.parse(queryParams);
 
-    const dbFilters = {
+    const dbFilters: CallFilters = {
       outcome: filters.outcome,
       sentiment: filters.sentiment,
       dateFrom: filters.dateFrom ? new Date(filters.dateFrom) : undefined,

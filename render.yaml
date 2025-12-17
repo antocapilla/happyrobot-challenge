@@ -13,7 +13,7 @@ services:
           name: happyrobot-db
           property: connectionString
       - key: API_KEY
-        sync: false  # Se configura manualmente en el dashboard
+        sync: false  # Configure manually in dashboard
     healthCheckPath: /
     autoDeploy: true
 

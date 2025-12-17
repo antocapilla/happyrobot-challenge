@@ -11,7 +11,7 @@ import { Prisma } from "@prisma/client";
  */
 export async function saveCall(call: CallInput): Promise<void> {
   try {
-    // Common data for both create and update
+    // Common data for both create and update with explicit Prisma types
     const commonData = {
       started_at: new Date(call.started_at),
       transcript: call.transcript,
@@ -22,11 +22,11 @@ export async function saveCall(call: CallInput): Promise<void> {
       initial_rate: call.extracted.initial_rate ?? null,
       agreed_rate: call.extracted.agreed_rate ?? null,
       negotiation_rounds: call.extracted.negotiation_rounds ?? null,
-    };
+    } satisfies Prisma.CallUpdateInput;
 
     await db.call.upsert({
       where: { call_id: call.call_id },
-      update: commonData satisfies Prisma.CallUpdateInput,
+      update: commonData,
       create: {
         call_id: call.call_id,
         ...commonData,

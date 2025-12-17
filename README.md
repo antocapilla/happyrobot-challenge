@@ -1,67 +1,67 @@
 # HappyRobot Challenge - Inbound Carrier Sales
 
 ## Stack
+
 - Next.js 16 + TypeScript + Prisma
 - PostgreSQL
 - Docker
 
-## Setup Inicial (Primera Vez)
+## Initial Setup
 
 ```bash
-# 1. Levantar PostgreSQL
+# 1. Start PostgreSQL
 docker-compose up -d db
 
-# 2. Crear archivo .env
+# 2. Create .env file
 echo 'DATABASE_URL="postgresql://postgres:postgres@localhost:5432/happyrobot"' > .env
 echo 'API_KEY="happyrobot-api-key"' >> .env
 
-# 3. Instalar dependencias
+# 3. Install dependencies
 bun install
 
-# 4. Crear migración inicial
+# 4. Create initial migration
 bun run db:migrate -- --name init
 
-# 5. (Opcional) Poblar datos de prueba
+# 5. (Optional) Seed test data
 bun run db:seed
 ```
 
-**IMPORTANTE**: Después del paso 3, commit y push la carpeta `prisma/migrations/`.
+**Important:** After step 4, commit and push the `prisma/migrations/` folder.
 
-## Desarrollo Local
+## Local Development
 
-**Opción 1: Docker Compose (igual que producción)**
+**Option 1: Docker Compose (same as production)**
 ```bash
 docker-compose up --build
-# App en http://localhost:3000
+# App available at http://localhost:3000
 ```
 
-**Opción 2: Solo BD + Bun dev (más rápido para desarrollo)**
+**Option 2: Database only + Bun dev (faster for development)**
 ```bash
 docker-compose up -d db
 bun run dev
 ```
 
-## Deploy
+## Deployment
 
-### Render.com (Recomendado)
+### Render.com (Recommended)
 
-1. Conectar repo en [Render.com](https://render.com)
-2. Crear Blueprint desde `render.yaml`
-3. Configurar variable `API_KEY` en el dashboard
-4. Deploy automático en cada push
+1. Connect your repo at [Render.com](https://render.com)
+2. Create Blueprint from `render.yaml`
+3. Configure `API_KEY` variable in dashboard
+4. Automatic deploy on every push
 
-Ver [docs/DEPLOY.md](./docs/DEPLOY.md) para detalles.
-
+See [docs/DEPLOY.md](./docs/DEPLOY.md) for details.
 
 ## API
 
-Header: `Authorization: Bearer happyrobot-api-key`
+Header: `X-API-Key: happyrobot-api-key`
 
-| Endpoint | Descripcion |
+| Endpoint | Description |
 |----------|-------------|
-| POST /api/verify-mc | Verifica MC |
-| POST /api/loads/search | Busca cargas |
-| GET /api/loads/list | Lista cargas |
-| POST /api/pricing/evaluate | Evalua oferta |
-| POST /api/calls/ingest | Guarda llamada |
-| GET /api/calls/list | Lista llamadas |
+| POST /api/verify-mc | Verify MC number |
+| POST /api/loads/search | Search loads |
+| GET /api/loads/list | List loads |
+| POST /api/pricing/evaluate | Evaluate pricing offer |
+| POST /api/calls/ingest | Save call |
+| GET /api/calls/list | List calls |

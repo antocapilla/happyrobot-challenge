@@ -24,7 +24,7 @@ describe("API: Loads", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`,
+        "X-API-Key": API_KEY,
       },
       body: JSON.stringify({
         equipment_type: "dry_van",
@@ -49,7 +49,7 @@ describe("API: Loads", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`,
+        "X-API-Key": API_KEY,
       },
       body: JSON.stringify({
         origin: "Dallas",

@@ -41,11 +41,11 @@ function buildWhereClause(filters?: CallFilters): CallWhereInput {
   }
 
   if (filters?.search) {
-    const searchLower = filters.search.toLowerCase();
+    const searchTerm = filters.search;
     where.OR = [
-      { call_id: { contains: filters.search } },
-      { mc_number: { contains: filters.search } },
-      { load_id: { contains: filters.search } },
+      { call_id: { contains: searchTerm } },
+      { mc_number: { contains: searchTerm } },
+      { load_id: { contains: searchTerm } },
     ];
   }
 
@@ -65,7 +65,7 @@ export async function getCalls(filters?: CallFilters): Promise<GetCallsResult> {
     const [calls, total] = await Promise.all([
       db.call.findMany({
         where,
-        orderBy: { started_at: "desc" },
+        orderBy: { started_at: "desc" } satisfies Prisma.CallOrderByWithRelationInput,
         skip,
         take: limit,
       }),

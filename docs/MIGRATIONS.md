@@ -1,113 +1,112 @@
-# Migraciones de Base de Datos
+# Database Migrations Guide
 
-## ¿Cómo funciona?
+## How It Works
 
-Prisma usa un sistema de migraciones versionadas: cada cambio al schema genera un archivo SQL en `prisma/migrations/` que se aplica en orden.
+Prisma uses a versioned migration system: each schema change generates a SQL file in `prisma/migrations/` that gets applied in order.
 
-**En desarrollo**: Creas y aplicas migraciones localmente  
-**En producción**: Las migraciones se aplican automáticamente en cada deploy
+**Development:** You create and apply migrations locally  
+**Production:** Migrations are applied automatically on every deploy
 
-## Setup inicial (primera vez)
+## Initial Setup (First Time)
 
-**IMPORTANTE**: Debes crear la primera migración antes del primer deploy:
+**IMPORTANT:** You must create the first migration before the first deploy:
 
 ```bash
-# 1. Levantar PostgreSQL local
-docker-compose up -d
+# 1. Start local PostgreSQL
+docker-compose up -d db
 
-# 2. Configurar DATABASE_URL (ya debería estar en .env)
+# 2. DATABASE_URL should already be in .env
 export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/happyrobot"
 
-# 3. Crear la migración inicial desde tu schema actual
+# 3. Create initial migration from your current schema
 bun run db:migrate -- --name init
 ```
 
-Esto creará `prisma/migrations/YYYYMMDDHHMMSS_init/migration.sql` con todo tu schema actual.
+This creates `prisma/migrations/YYYYMMDDHHMMSS_init/migration.sql` with your current schema.
 
-**Commit y push** estos archivos antes del primer deploy a Render.
+**Commit and push** these files before the first deploy to Render.
 
-## Flujo de trabajo normal
+## Normal Workflow
 
-### Desarrollo Local
+### Local Development
 
-Cuando modificas `prisma/schema.prisma`:
+When you modify `prisma/schema.prisma`:
 
 ```bash
-# Crea la migración y la aplica automáticamente a tu BD local
+# Creates migration and applies it automatically to your local DB
 bun run db:migrate
 ```
 
-Esto:
-1. Crea un archivo SQL en `prisma/migrations/`
-2. Aplica la migración a tu BD local
-3. Regenera el cliente de Prisma
+This:
+1. Creates a SQL file in `prisma/migrations/`
+2. Applies migration to your local DB
+3. Regenerates Prisma client
 
-### Producción (Render.com)
+### Production (Render.com)
 
-**Las migraciones se aplican automáticamente** cuando Render despliega:
+**Migrations are applied automatically** when Render deploys:
 
-1. Render construye el Docker
-2. En el `CMD` del Dockerfile se ejecuta: `prisma migrate deploy`
-3. Esto aplica todas las migraciones pendientes (solo las nuevas)
-4. Luego inicia el servidor
+1. Render builds Docker
+2. Dockerfile `CMD` runs: `prisma migrate deploy`
+3. This applies all pending migrations (only new ones)
+4. Then starts the server
 
-**No necesitas hacer nada manualmente** - cada deploy aplica las migraciones automáticamente.
+**You don't need to do anything manually** - each deploy applies migrations automatically.
 
-## Cambiar el Schema (flujo completo)
+## Changing Schema (Complete Flow)
 
-1. **Modifica** `prisma/schema.prisma`
-2. **Ejecuta** `bun run db:migrate` (en local) - Prisma te pedirá un nombre descriptivo
-3. **Verifica** que la migración funciona localmente
-4. **Commit** los cambios (incluyendo `prisma/migrations/`)
-5. **Push** a GitHub
-6. **Render despliega automáticamente** y aplica la migración
+1. **Modify** `prisma/schema.prisma`
+2. **Run** `bun run db:migrate` (locally) - Prisma will ask for a descriptive name
+3. **Verify** migration works locally
+4. **Commit** changes (including `prisma/migrations/`)
+5. **Push** to GitHub
+6. **Render deploys automatically** and applies migration
 
-**Ejemplo práctico:**
+**Practical example:**
 
 ```bash
-# Cambias schema.prisma para añadir un campo nuevo
-# Luego:
+# You change schema.prisma to add a new field
+# Then:
 bun run db:migrate
-# Prisma pregunta: "Enter a name for the new migration:"
-# Respondes: "add_user_email_field"
-# Prisma crea: prisma/migrations/20240101120000_add_user_email_field/migration.sql
+# Prisma asks: "Enter a name for the new migration:"
+# You answer: "add_user_email_field"
+# Prisma creates: prisma/migrations/20240101120000_add_user_email_field/migration.sql
 
 git add prisma/
 git commit -m "Add user email field"
 git push
-# Render despliega y aplica la migración automáticamente
+# Render deploys and applies migration automatically
 ```
 
-## Ver Estado de Migraciones
+## Check Migration Status
 
 ```bash
-# Ver qué migraciones están aplicadas
+# See which migrations are applied
 bunx prisma migrate status
 ```
 
-## Rollback (si es necesario)
+## Rollback (If Needed)
 
-Prisma no tiene rollback automático. Si necesitas revertir:
+Prisma doesn't have automatic rollback. If you need to revert:
 
-1. Modifica el schema para volver al estado anterior
-2. Crea una nueva migración: `bun run db:migrate`
-3. O restaura desde backup de la BD
+1. Modify schema to return to previous state
+2. Create a new migration: `bun run db:migrate`
+3. Or restore from database backup
 
-## Seed de Datos
+## Seed Data
 
-Para poblar datos iniciales en producción:
+To populate initial data in production:
 
 ```bash
-# Obtener DATABASE_URL del dashboard de Render
+# Get DATABASE_URL from Render dashboard
 export DATABASE_URL="postgresql://..."
 
-# Ejecutar seed
+# Run seed
 bun run db:seed
 ```
 
-## Resumen
+## Summary
 
-- **Desarrollo**: `bun run db:migrate` (crea y aplica)
-- **Producción**: Automático en cada deploy (`prisma migrate deploy`)
-- **Schema changes**: Modificar `schema.prisma` → migrar → commit → push → deploy automático
-
+- **Development:** `bun run db:migrate` (creates and applies)
+- **Production:** Automatic on every deploy (`prisma migrate deploy`)
+- **Schema changes:** Modify `schema.prisma` → migrate → commit → push → automatic deploy

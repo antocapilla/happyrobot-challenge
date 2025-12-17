@@ -11,7 +11,7 @@ describe("API: Pricing Evaluate", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`,
+        "X-API-Key": API_KEY,
       },
       body: JSON.stringify({
         mc_number: "MC-123456",
@@ -37,7 +37,7 @@ describe("API: Pricing Evaluate", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`,
+        "X-API-Key": API_KEY,
       },
       body: JSON.stringify({
         mc_number: "MC-123456",
@@ -83,7 +83,7 @@ describe("API: Pricing Evaluate", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`,
+        "X-API-Key": API_KEY,
       },
       body: JSON.stringify({
         listed_rate: 2000,

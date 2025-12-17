@@ -11,19 +11,19 @@ ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
-# Instalar wget para healthcheck
+# Install wget for healthcheck
 RUN apk add --no-cache wget
 
-# Instalar dependencias de producción
+# Install production dependencies
 COPY package.json bun.lockb* ./
 RUN bun install --frozen-lockfile --production
 
-# Copiar app standalone
+# Copy standalone app
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Copiar prisma schema y migraciones
+# Copy Prisma schema and migrations
 COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 3000

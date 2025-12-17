@@ -41,7 +41,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# lock files (usamos bun.lockb)
+# lock files (we use bun.lockb)
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
@@ -53,3 +53,10 @@ prisma/dev.db
 prisma/dev.db-journal
 *.db
 *.db-journal
+
+
+# secrets
+.env
+
+# docs
+docs-local/

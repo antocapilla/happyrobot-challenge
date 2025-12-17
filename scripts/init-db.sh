@@ -1,32 +1,32 @@
 #!/bin/bash
 set -e
 
-echo "==> Inicializando base de datos..."
+echo "==> Initializing database..."
 
-# 1. Verificar que PostgreSQL esté corriendo
-echo "[1/3] Verificando PostgreSQL..."
+# 1. Check if PostgreSQL is running
+echo "[1/3] Checking PostgreSQL..."
 if ! docker-compose ps db | grep -q "Up"; then
-    echo "Levantando PostgreSQL..."
+    echo "Starting PostgreSQL..."
     docker-compose up -d db
-    echo "Esperando a que PostgreSQL esté listo..."
+    echo "Waiting for PostgreSQL to be ready..."
     sleep 5
 fi
 
-# 2. Verificar si ya existen migraciones
+# 2. Check if migrations already exist
 if [ -d "prisma/migrations" ] && [ "$(ls -A prisma/migrations)" ]; then
-    echo "[2/3] Migraciones ya existen, aplicándolas..."
+    echo "[2/3] Migrations exist, applying them..."
     bun run db:migrate:deploy
 else
-    echo "[2/3] Creando migración inicial..."
+    echo "[2/3] Creating initial migration..."
     bun run db:migrate -- --name init
 fi
 
-# 3. Generar cliente de Prisma
-echo "[3/3] Generando cliente de Prisma..."
+# 3. Generate Prisma client
+echo "[3/3] Generating Prisma client..."
 bun run db:generate
 
 echo ""
-echo "✅ Base de datos inicializada correctamente!"
+echo "✅ Database initialized successfully!"
 echo ""
-echo "Para poblar datos de prueba: bun run db:seed"
+echo "To seed test data: bun run db:seed"
 
