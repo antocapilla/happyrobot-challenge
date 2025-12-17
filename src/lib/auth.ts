@@ -10,7 +10,7 @@ export function requireApiKey(req: NextRequest): { valid: boolean; error?: strin
   const apiKey = req.headers.get("x-api-key");
   
   if (!apiKey) {
-    return { valid: false, error: "Missing X-API-Key header" };
+    return { valid: false, error: "Missing API key" };
   }
 
   if (apiKey !== env.API_KEY) {
