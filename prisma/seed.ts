@@ -307,8 +307,8 @@ async function main() {
   console.log(`Generating ${totalCalls} calls...`);
 
   for (let i = 0; i < totalCalls; i++) {
-    const outcome = randomElement(CALL_OUTCOMES);
-    const sentiment = randomElement(CALL_SENTIMENTS);
+    const outcome = randomElement(CALL_OUTCOMES) as string;
+    const sentiment = randomElement(CALL_SENTIMENTS) as string;
     const mcNumber = randomElement(MC_NUMBERS);
     const loadId = randomElement(loadIdsWithNull);
     let startedAt = randomDate(callStartDate, callEndDate);

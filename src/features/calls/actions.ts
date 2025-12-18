@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { db } from "@/server/db";
 import type { CreateCallInput } from "./schemas";
 import { ApiError } from "@/lib/errors";
@@ -32,7 +32,8 @@ export async function createCall(input: CreateCallInput): Promise<{ call_id: str
       update: data,
     });
 
-    revalidateTag("calls");
+    revalidatePath("/calls");
+    revalidatePath("/api/calls");
 
     return { call_id };
   } catch (error) {
