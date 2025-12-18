@@ -31,15 +31,15 @@ export async function searchLoads(params: LoadSearchParams): Promise<Load[]> {
     const where: LoadWhereInput = {};
 
     if (params.equipment_type) {
-      where.equipment_type = params.equipment_type as EquipmentType;
+      where.equipment_type = params.equipment_type;
     }
 
     if (params.origin) {
-      where.origin = { contains: params.origin };
+      where.origin = { contains: params.origin, mode: "insensitive" };
     }
 
     if (params.destination) {
-      where.destination = { contains: params.destination };
+      where.destination = { contains: params.destination, mode: "insensitive" };
     }
 
     const loads = await db.load.findMany({
@@ -53,6 +53,9 @@ export async function searchLoads(params: LoadSearchParams): Promise<Load[]> {
       return ratePerMileB - ratePerMileA;
     });
   } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       throw new ApiError(500, `Database error: ${error.message}`);
     }

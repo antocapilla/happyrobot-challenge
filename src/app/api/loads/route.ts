@@ -7,24 +7,34 @@ import { searchLoads, getLoads } from "@/features/loads/queries";
 export async function GET(req: NextRequest) {
   return withAuth(req, async (req) => {
     try {
-      const { searchParams } = new URL(req.url);
+      const searchParams = req.nextUrl.searchParams;
       
-      // Extract query parameters
-      const equipment_type = searchParams.get("equipment_type") || undefined;
-      const origin = searchParams.get("origin") || undefined;
-      const destination = searchParams.get("destination") || undefined;
+      // Normalize query parameters: trim and remove surrounding quotes
+      const normalizeParam = (value: string | null): string | undefined => {
+        if (!value) return undefined;
+        const trimmed = value.trim();
+        if (trimmed.length === 0) return undefined;
+        // Remove surrounding quotes if present
+        const cleaned = trimmed.replace(/^["']|["']$/g, "");
+        return cleaned.length > 0 ? cleaned : undefined;
+      };
+
+      const queryParams = {
+        equipment_type: normalizeParam(searchParams.get("equipment_type")),
+        origin: normalizeParam(searchParams.get("origin")),
+        destination: normalizeParam(searchParams.get("destination")),
+      };
+
+      // Parse and validate query parameters
+      const params = loadSearchSchema.parse(queryParams);
 
       // If any search parameters are provided, perform search
-      if (equipment_type || origin || destination) {
-        const params = loadSearchSchema.parse({
-          equipment_type,
-          origin,
-          destination,
-        });
+      if (params.equipment_type || params.origin || params.destination) {
         const loads = await searchLoads(params);
 
         return NextResponse.json({
           loads,
+          count: loads.length,
           error: false,
           error_message: null,
         });

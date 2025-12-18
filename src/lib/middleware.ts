@@ -9,6 +9,7 @@ export async function withAuth(
   handler: (req: NextRequest) => Promise<NextResponse>
 ): Promise<NextResponse> {
   const auth = requireApiKey(req);
+  
   if (!auth.valid) {
     return NextResponse.json(
       {
@@ -17,8 +18,14 @@ export async function withAuth(
           message: auth.error || "Authentication required",
         },
       },
-      { status: 401 }
+      { 
+        status: 401,
+        headers: {
+          "WWW-Authenticate": "ApiKey",
+        },
+      }
     );
   }
+  
   return handler(req);
 }

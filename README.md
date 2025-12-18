@@ -51,7 +51,7 @@ bun run dev
 3. Configure `API_KEY` variable in dashboard
 4. Automatic deploy on every push
 
-See [docs/DEPLOY.md](./docs/DEPLOY.md) for details.
+See [docs/deploy.md](./docs/deploy.md) for details.
 
 ## API
 
@@ -73,4 +73,10 @@ Interactive API documentation is available at `/api-docs` (e.g., `http://localho
 
 The OpenAPI specification is available at `/api/openapi.json`.
 
-See [docs/API_DOCUMENTATION.md](./docs/API_DOCUMENTATION.md) for more details.
+See [docs/api.md](./docs/api.md) for complete API reference.
+
+## Documentation
+
+- [API Reference](./docs/api.md) - Complete API endpoint documentation
+- [Architecture](./docs/architecture.md) - System architecture and design decisions
+- [Deployment](./docs/deploy.md) - Deployment guide

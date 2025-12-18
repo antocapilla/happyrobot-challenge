@@ -26,28 +26,50 @@ export async function verifyMC(mcNumber: string): Promise<MCVerificationResult> 
     clearTimeout(timeoutId);
 
     if (!response.ok) {
+      if (response.status === 404) {
+        return {
+          verified: false,
+          error: true,
+          error_message: "MC number not found",
+        };
+      }
+      
       return {
-        verified: mcNumber.length >= 5 && /^\d+$/.test(mcNumber),
-        carrier_name: `CARRIER ${mcNumber}`,
-        authority_status: "ACTIVE",
-        error: false,
+        verified: false,
+        error: true,
+        error_message: `FMCSA API error: ${response.status} ${response.statusText}`,
       };
     }
 
     const data = await response.json();
     
+    if (!data.carrier) {
+      return {
+        verified: false,
+        error: true,
+        error_message: "MC number not found",
+      };
+    }
+    
     return {
-      verified: data.carrier?.operatingStatus === "AUTHORIZED",
-      carrier_name: data.carrier?.legalName,
-      authority_status: data.carrier?.operatingStatus,
+      verified: data.carrier.operatingStatus === "AUTHORIZED",
+      carrier_name: data.carrier.legalName,
+      authority_status: data.carrier.operatingStatus,
       error: false,
     };
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      return {
+        verified: false,
+        error: true,
+        error_message: "Request timeout: FMCSA API did not respond in time",
+      };
+    }
+    
     return {
-      verified: mcNumber.length >= 5 && /^\d+$/.test(mcNumber),
-      carrier_name: `CARRIER ${mcNumber}`,
-      authority_status: "ACTIVE",
-      error: false,
+      verified: false,
+      error: true,
+      error_message: error instanceof Error ? error.message : "Failed to verify MC number",
     };
   }
 }

@@ -8,23 +8,18 @@ const envSchema = z.object({
 
 type Env = z.infer<typeof envSchema>;
 
-let cachedEnv: Env | null = null;
+let env: Env;
 
-function getEnv(): Env {
-  if (cachedEnv) return cachedEnv;
-  
-  // Skip validation during build time
-  if (process.env.NEXT_PHASE === "phase-production-build") {
-    return {
-      NODE_ENV: "production",
-      DATABASE_URL: "build-placeholder",
-      API_KEY: "build-placeholder",
-    };
-  }
-
+// Skip validation during build time
+if (process.env.NEXT_PHASE === "phase-production-build") {
+  env = {
+    NODE_ENV: "production",
+    DATABASE_URL: "build-placeholder",
+    API_KEY: "build-placeholder",
+  };
+} else {
   try {
-    cachedEnv = envSchema.parse(process.env);
-    return cachedEnv;
+    env = envSchema.parse(process.env);
   } catch (error) {
     if (error instanceof z.ZodError) {
       const missingVars = error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join("\n");
@@ -34,8 +29,4 @@ function getEnv(): Env {
   }
 }
 
-export const env = new Proxy({} as Env, {
-  get(_, prop: keyof Env) {
-    return getEnv()[prop];
-  },
-});
+export { env };
