@@ -82,7 +82,6 @@ export type CallCountAggregateOutputType = {
   initial_rate: number
   final_rate: number
   negotiation_rounds: number
-  raw_extracted: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -145,7 +144,6 @@ export type CallCountAggregateInputType = {
   initial_rate?: true
   final_rate?: true
   negotiation_rounds?: true
-  raw_extracted?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -249,7 +247,6 @@ export type CallGroupByOutputType = {
   initial_rate: number | null
   final_rate: number | null
   negotiation_rounds: number | null
-  raw_extracted: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
   _count: CallCountAggregateOutputType | null
@@ -289,7 +286,6 @@ export type CallWhereInput = {
   initial_rate?: Prisma.FloatNullableFilter<"Call"> | number | null
   final_rate?: Prisma.FloatNullableFilter<"Call"> | number | null
   negotiation_rounds?: Prisma.IntNullableFilter<"Call"> | number | null
-  raw_extracted?: Prisma.JsonNullableFilter<"Call">
   createdAt?: Prisma.DateTimeFilter<"Call"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Call"> | Date | string
   selected_load?: Prisma.XOR<Prisma.LoadNullableScalarRelationFilter, Prisma.LoadWhereInput> | null
@@ -307,7 +303,6 @@ export type CallOrderByWithRelationInput = {
   initial_rate?: Prisma.SortOrderInput | Prisma.SortOrder
   final_rate?: Prisma.SortOrderInput | Prisma.SortOrder
   negotiation_rounds?: Prisma.SortOrderInput | Prisma.SortOrder
-  raw_extracted?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   selected_load?: Prisma.LoadOrderByWithRelationInput
@@ -328,7 +323,6 @@ export type CallWhereUniqueInput = Prisma.AtLeast<{
   initial_rate?: Prisma.FloatNullableFilter<"Call"> | number | null
   final_rate?: Prisma.FloatNullableFilter<"Call"> | number | null
   negotiation_rounds?: Prisma.IntNullableFilter<"Call"> | number | null
-  raw_extracted?: Prisma.JsonNullableFilter<"Call">
   createdAt?: Prisma.DateTimeFilter<"Call"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Call"> | Date | string
   selected_load?: Prisma.XOR<Prisma.LoadNullableScalarRelationFilter, Prisma.LoadWhereInput> | null
@@ -346,7 +340,6 @@ export type CallOrderByWithAggregationInput = {
   initial_rate?: Prisma.SortOrderInput | Prisma.SortOrder
   final_rate?: Prisma.SortOrderInput | Prisma.SortOrder
   negotiation_rounds?: Prisma.SortOrderInput | Prisma.SortOrder
-  raw_extracted?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.CallCountOrderByAggregateInput
@@ -371,7 +364,6 @@ export type CallScalarWhereWithAggregatesInput = {
   initial_rate?: Prisma.FloatNullableWithAggregatesFilter<"Call"> | number | null
   final_rate?: Prisma.FloatNullableWithAggregatesFilter<"Call"> | number | null
   negotiation_rounds?: Prisma.IntNullableWithAggregatesFilter<"Call"> | number | null
-  raw_extracted?: Prisma.JsonNullableWithAggregatesFilter<"Call">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Call"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Call"> | Date | string
 }
@@ -387,7 +379,6 @@ export type CallCreateInput = {
   initial_rate?: number | null
   final_rate?: number | null
   negotiation_rounds?: number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   selected_load?: Prisma.LoadCreateNestedOneWithoutCallsInput
@@ -405,7 +396,6 @@ export type CallUncheckedCreateInput = {
   initial_rate?: number | null
   final_rate?: number | null
   negotiation_rounds?: number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -421,7 +411,6 @@ export type CallUpdateInput = {
   initial_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   final_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   negotiation_rounds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   selected_load?: Prisma.LoadUpdateOneWithoutCallsNestedInput
@@ -439,7 +428,6 @@ export type CallUncheckedUpdateInput = {
   initial_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   final_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   negotiation_rounds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -456,7 +444,6 @@ export type CallCreateManyInput = {
   initial_rate?: number | null
   final_rate?: number | null
   negotiation_rounds?: number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -472,7 +459,6 @@ export type CallUpdateManyMutationInput = {
   initial_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   final_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   negotiation_rounds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -489,7 +475,6 @@ export type CallUncheckedUpdateManyInput = {
   initial_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   final_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   negotiation_rounds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -516,7 +501,6 @@ export type CallCountOrderByAggregateInput = {
   initial_rate?: Prisma.SortOrder
   final_rate?: Prisma.SortOrder
   negotiation_rounds?: Prisma.SortOrder
-  raw_extracted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -642,7 +626,6 @@ export type CallCreateWithoutSelected_loadInput = {
   initial_rate?: number | null
   final_rate?: number | null
   negotiation_rounds?: number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -658,7 +641,6 @@ export type CallUncheckedCreateWithoutSelected_loadInput = {
   initial_rate?: number | null
   final_rate?: number | null
   negotiation_rounds?: number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -704,7 +686,6 @@ export type CallScalarWhereInput = {
   initial_rate?: Prisma.FloatNullableFilter<"Call"> | number | null
   final_rate?: Prisma.FloatNullableFilter<"Call"> | number | null
   negotiation_rounds?: Prisma.IntNullableFilter<"Call"> | number | null
-  raw_extracted?: Prisma.JsonNullableFilter<"Call">
   createdAt?: Prisma.DateTimeFilter<"Call"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Call"> | Date | string
 }
@@ -720,7 +701,6 @@ export type CallCreateManySelected_loadInput = {
   initial_rate?: number | null
   final_rate?: number | null
   negotiation_rounds?: number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -736,7 +716,6 @@ export type CallUpdateWithoutSelected_loadInput = {
   initial_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   final_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   negotiation_rounds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -752,7 +731,6 @@ export type CallUncheckedUpdateWithoutSelected_loadInput = {
   initial_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   final_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   negotiation_rounds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -768,7 +746,6 @@ export type CallUncheckedUpdateManyWithoutSelected_loadInput = {
   initial_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   final_rate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   negotiation_rounds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  raw_extracted?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -787,7 +764,6 @@ export type CallSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   initial_rate?: boolean
   final_rate?: boolean
   negotiation_rounds?: boolean
-  raw_extracted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   selected_load?: boolean | Prisma.Call$selected_loadArgs<ExtArgs>
@@ -805,7 +781,6 @@ export type CallSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   initial_rate?: boolean
   final_rate?: boolean
   negotiation_rounds?: boolean
-  raw_extracted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   selected_load?: boolean | Prisma.Call$selected_loadArgs<ExtArgs>
@@ -823,7 +798,6 @@ export type CallSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   initial_rate?: boolean
   final_rate?: boolean
   negotiation_rounds?: boolean
-  raw_extracted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   selected_load?: boolean | Prisma.Call$selected_loadArgs<ExtArgs>
@@ -841,12 +815,11 @@ export type CallSelectScalar = {
   initial_rate?: boolean
   final_rate?: boolean
   negotiation_rounds?: boolean
-  raw_extracted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CallOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "call_id" | "started_at" | "transcript" | "outcome" | "sentiment" | "mc_number" | "selected_load_id" | "initial_rate" | "final_rate" | "negotiation_rounds" | "raw_extracted" | "createdAt" | "updatedAt", ExtArgs["result"]["call"]>
+export type CallOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "call_id" | "started_at" | "transcript" | "outcome" | "sentiment" | "mc_number" | "selected_load_id" | "initial_rate" | "final_rate" | "negotiation_rounds" | "createdAt" | "updatedAt", ExtArgs["result"]["call"]>
 export type CallInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   selected_load?: boolean | Prisma.Call$selected_loadArgs<ExtArgs>
 }
@@ -874,7 +847,6 @@ export type $CallPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     initial_rate: number | null
     final_rate: number | null
     negotiation_rounds: number | null
-    raw_extracted: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["call"]>
@@ -1312,7 +1284,6 @@ export interface CallFieldRefs {
   readonly initial_rate: Prisma.FieldRef<"Call", 'Float'>
   readonly final_rate: Prisma.FieldRef<"Call", 'Float'>
   readonly negotiation_rounds: Prisma.FieldRef<"Call", 'Int'>
-  readonly raw_extracted: Prisma.FieldRef<"Call", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Call", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Call", 'DateTime'>
 }

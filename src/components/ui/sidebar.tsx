@@ -60,7 +60,7 @@ function SidebarProvider({
   return (
     <SidebarContext.Provider value={contextValue}>
       <div
-        className={cn("flex min-h-svh w-full", className)}
+        className={cn("flex w-full", className)}
         style={
           {
             "--sidebar-width": SIDEBAR_WIDTH,
@@ -106,7 +106,7 @@ function Sidebar({
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-10 hidden h-svh w-[var(--sidebar-width)] flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-transform duration-200 ease-in-out md:flex",
+        "fixed inset-y-0 left-0 z-10 hidden h-screen w-[var(--sidebar-width)] flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-transform duration-200 ease-in-out md:flex",
         !open && "-translate-x-full",
         className
       )}

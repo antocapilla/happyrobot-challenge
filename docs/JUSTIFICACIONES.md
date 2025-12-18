@@ -96,7 +96,7 @@ Call (calls)
 ## 5. API
 
 ### Authentication
-Header `x-api-key: <API_KEY>` on all endpoints (except GET `/api/calls/list` and GET `/api/calls/[id]`).
+Header `x-api-key: <API_KEY>` on all endpoints (except GET `/api/calls` and GET `/api/calls/[id]`).
 
 ### Endpoints
 
@@ -106,9 +106,9 @@ Header `x-api-key: <API_KEY>` on all endpoints (except GET `/api/calls/list` and
 | GET | /api/loads/search | Search loads by criteria |
 | GET | /api/loads/list | List all loads |
 | POST | /api/pricing/evaluate | Evaluate counteroffer |
-| POST | /api/calls/ingest | Register call |
-| GET | /api/calls/list | List calls (filters, pagination) |
-| GET | /api/calls/[id] | Call details |
+| POST | /api/calls | Create call |
+| GET | /api/calls | List calls (filters, pagination) |
+| GET | /api/calls/[id] | Get call details |
 
 ### Standard response
 

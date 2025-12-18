@@ -34,8 +34,8 @@ bun add swagger-ui-react
 - `GET /api/loads/search` - Search loads by criteria
 - `GET /api/loads/list` - List all loads
 - `POST /api/pricing/evaluate` - Evaluate counteroffer
-- `POST /api/calls/ingest` - Register a call
-- `GET /api/calls/list` - List calls with filters
+- `POST /api/calls` - Create a call
+- `GET /api/calls` - List calls with filters
 - `GET /api/calls/{id}` - Get call details
 
 ## Updating the Documentation

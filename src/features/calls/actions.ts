@@ -2,39 +2,43 @@
 
 import { revalidateTag } from "next/cache";
 import { db } from "@/server/db";
-import type { CallIngested } from "./schemas";
+import type { CreateCallInput } from "./schemas";
 import { ApiError } from "@/lib/errors";
 import { Prisma } from "@/generated/prisma/client";
+import { randomUUID } from "crypto";
 
-export async function saveCall(call: CallIngested): Promise<void> {
+export async function createCall(input: CreateCallInput): Promise<{ call_id: string }> {
   try {
-    const writableFields = {
-      started_at: call.started_at,
-      transcript: call.transcript,
-      outcome: call.outcome,
-      sentiment: call.sentiment,
-      mc_number: call.mc_number,
-      selected_load_id: call.selected_load_id,
-      initial_rate: call.initial_rate,
-      final_rate: call.final_rate,
-      negotiation_rounds: call.negotiation_rounds,
-      raw_extracted: call.raw_extracted,
+    const call_id = input.call_id || `call_${randomUUID()}`;
+    
+    const data = {
+      started_at: input.started_at,
+      transcript: input.transcript,
+      outcome: input.outcome,
+      sentiment: input.sentiment,
+      mc_number: input.mc_number,
+      selected_load_id: input.selected_load_id,
+      initial_rate: input.initial_rate,
+      final_rate: input.final_rate,
+      negotiation_rounds: input.negotiation_rounds,
     };
 
     await db.call.upsert({
-      where: { call_id: call.call_id },
+      where: { call_id },
       create: {
-        call_id: call.call_id,
-        ...writableFields,
+        call_id,
+        ...data,
       },
-      update: writableFields,
+      update: data,
     });
 
-    revalidateTag("calls", "default");
+    revalidateTag("calls");
+
+    return { call_id };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       throw new ApiError(500, `Database error: ${error.message}`);
     }
-    throw new ApiError(500, "Failed to save call data");
+    throw new ApiError(500, "Failed to create call");
   }
 }

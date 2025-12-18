@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Prisma } from "@/generated/prisma/client";
 import type { Call as PrismaCall } from "@/generated/prisma/client";
-import { callIngestSchema, callOutcomeSchema, callSentimentSchema } from "./schemas";
+import { callOutcomeSchema, callSentimentSchema } from "./schemas";
 
 // ============================================================================
 // Zod-inferred types (for validation)
@@ -9,7 +9,6 @@ import { callIngestSchema, callOutcomeSchema, callSentimentSchema } from "./sche
 
 export type CallOutcome = z.infer<typeof callOutcomeSchema>;
 export type CallSentiment = z.infer<typeof callSentimentSchema>;
-export type CallInput = z.infer<typeof callIngestSchema>;
 
 // ============================================================================
 // Prisma types (for database operations)

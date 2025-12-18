@@ -1,8 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
+import { withAuth } from "@/lib/middleware";
 import { handleApiError } from "@/lib/errors";
-import { listCallsQuerySchema } from "@/features/calls/schemas";
+import { createCallSchema, listCallsQuerySchema } from "@/features/calls/schemas";
+import { createCall } from "@/features/calls/actions";
 import { getCalls } from "@/features/calls/queries";
 import { CallFilters } from "@/features/calls/types";
+
+export async function POST(req: NextRequest) {
+  return withAuth(req, async (req) => {
+    try {
+      const body = await req.json();
+      const input = createCallSchema.parse(body);
+      const { call_id } = await createCall(input);
+      return NextResponse.json({ 
+        ok: true,
+        call_id
+      });
+    } catch (error) {
+      return handleApiError(error);
+    }
+  });
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -49,3 +67,4 @@ export async function GET(req: NextRequest) {
     return handleApiError(error);
   }
 }
+

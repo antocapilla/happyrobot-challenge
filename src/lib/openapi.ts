@@ -144,10 +144,10 @@ export const openApiSpec = {
         },
         required: ["accept", "error"],
       },
-      CallIngestRequest: {
+      CreateCallRequest: {
         type: "object",
         properties: {
-          call_id: { type: "string", example: "call_001" },
+          call_id: { type: "string", example: "call_001", description: "Optional. If not provided, a unique ID will be generated automatically." },
           started_at: { type: "string", format: "date-time", example: "2025-12-15T10:00:00Z" },
           transcript: { type: "string", nullable: true },
           outcome: {
@@ -165,11 +165,10 @@ export const openApiSpec = {
           initial_rate: { type: "number", nullable: true, example: 2200 },
           final_rate: { type: "number", nullable: true, example: 2400 },
           negotiation_rounds: { type: "number", nullable: true, example: 2 },
-          raw_extracted: { type: "object", nullable: true },
         },
-        required: ["call_id", "started_at", "outcome", "sentiment"],
+        required: ["started_at", "outcome", "sentiment"],
       },
-      CallIngestResponse: {
+      CreateCallResponse: {
         type: "object",
         properties: {
           ok: { type: "boolean", example: true },
@@ -376,26 +375,26 @@ export const openApiSpec = {
         },
       },
     },
-    "/api/calls/ingest": {
+    "/api/calls": {
       post: {
         tags: ["Calls"],
-        summary: "Register a call",
-        description: "Saves call data including transcript, outcome, and negotiation details",
+        summary: "Create a call",
+        description: "Creates a new call with transcript, outcome, and negotiation details. If call_id is not provided, a unique ID will be generated automatically.",
         security: [{ ApiKeyAuth: [] }],
         requestBody: {
           required: true,
           content: {
             "application/json": {
-              schema: { $ref: "#/components/schemas/CallIngestRequest" },
+              schema: { $ref: "#/components/schemas/CreateCallRequest" },
             },
           },
         },
         responses: {
           "200": {
-            description: "Call registered successfully",
+            description: "Call created successfully",
             content: {
               "application/json": {
-                schema: { $ref: "#/components/schemas/CallIngestResponse" },
+                schema: { $ref: "#/components/schemas/CreateCallResponse" },
               },
             },
           },
@@ -417,8 +416,6 @@ export const openApiSpec = {
           },
         },
       },
-    },
-    "/api/calls/list": {
       get: {
         tags: ["Calls"],
         summary: "List calls with filters",

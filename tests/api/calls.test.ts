@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { GET } from "@/app/api/calls/list/route";
+import { GET } from "@/app/api/calls/route";
 import { NextRequest } from "next/server";
 
 describe("API: Calls List", () => {
   it("should return calls list with pagination", async () => {
-    const url = new URL("http://localhost:3000/api/calls/list");
+    const url = new URL("http://localhost:3000/api/calls");
     url.searchParams.set("page", "1");
     url.searchParams.set("limit", "10");
 
@@ -20,8 +20,8 @@ describe("API: Calls List", () => {
   });
 
   it("should filter calls by outcome", async () => {
-    const url = new URL("http://localhost:3000/api/calls/list");
-    url.searchParams.set("outcome", "deal_accepted");
+    const url = new URL("http://localhost:3000/api/calls");
+    url.searchParams.set("outcome", "booked_transfer");
     url.searchParams.set("limit", "10");
 
     const req = new NextRequest(url);
@@ -30,12 +30,12 @@ describe("API: Calls List", () => {
 
     expect(response.status).toBe(200);
     if (data.calls.length > 0) {
-      expect(data.calls[0].outcome).toBe("deal_accepted");
+      expect(data.calls[0].outcome).toBe("booked_transfer");
     }
   });
 
   it("should filter calls by sentiment", async () => {
-    const url = new URL("http://localhost:3000/api/calls/list");
+    const url = new URL("http://localhost:3000/api/calls");
     url.searchParams.set("sentiment", "positive");
     url.searchParams.set("limit", "10");
 
@@ -50,7 +50,7 @@ describe("API: Calls List", () => {
   });
 
   it("should validate limit maximum", async () => {
-    const url = new URL("http://localhost:3000/api/calls/list");
+    const url = new URL("http://localhost:3000/api/calls");
     url.searchParams.set("limit", "200");
 
     const req = new NextRequest(url);
@@ -63,11 +63,11 @@ describe("API: Calls List", () => {
   });
 
   it("should paginate correctly", async () => {
-    const url1 = new URL("http://localhost:3000/api/calls/list");
+    const url1 = new URL("http://localhost:3000/api/calls");
     url1.searchParams.set("page", "1");
     url1.searchParams.set("limit", "10");
 
-    const url2 = new URL("http://localhost:3000/api/calls/list");
+    const url2 = new URL("http://localhost:3000/api/calls");
     url2.searchParams.set("page", "2");
     url2.searchParams.set("limit", "10");
 

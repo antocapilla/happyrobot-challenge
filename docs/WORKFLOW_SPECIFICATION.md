@@ -999,7 +999,7 @@ Do not invent or guess values.
 
 **Method:** POST
 
-**URL:** `https://<your-api-host>/api/calls/ingest`
+**URL:** `https://<your-api-host>/api/calls`
 
 **Headers:**
 ```
@@ -1019,12 +1019,11 @@ Content-Type: application/json
   "selected_load_id": "@ai_extract_offer_data.extracted.load_id",
   "initial_rate": "@ai_extract_offer_data.extracted.initial_rate",
   "final_rate": "@ai_extract_offer_data.extracted.agreed_rate",
-  "negotiation_rounds": "@ai_extract_offer_data.extracted.negotiation_rounds",
-  "raw_extracted": "@ai_extract_offer_data.extracted"
+  "negotiation_rounds": "@ai_extract_offer_data.extracted.negotiation_rounds"
 }
 ```
 
-**Note:** The API expects individual fields (`mc_number`, `selected_load_id`, etc.) plus `raw_extracted` as a JSON object containing all extracted data. All fields except `call_id`, `started_at`, `outcome`, and `sentiment` are optional and can be `null`.
+**Note:** All fields except `started_at`, `outcome`, and `sentiment` are optional. If `call_id` is not provided, a unique ID will be generated automatically by the server.
 
 **Description:**
 Sends call results to backend API for metrics dashboard and storage.

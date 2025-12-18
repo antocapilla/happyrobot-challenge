@@ -63,8 +63,9 @@ Header: `X-API-Key: happyrobot-api-key`
 | GET /api/loads/search | Search loads |
 | GET /api/loads/list | List loads |
 | POST /api/pricing/evaluate | Evaluate pricing offer |
-| POST /api/calls/ingest | Save call |
-| GET /api/calls/list | List calls |
+| POST /api/calls | Create call |
+| GET /api/calls | List calls |
+| GET /api/calls/{id} | Get call |
 
 ### API Documentation
 

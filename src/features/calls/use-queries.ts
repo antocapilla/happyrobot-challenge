@@ -38,7 +38,7 @@ async function fetchCalls(
   params.append("page", String(page));
   params.append("limit", String(limit));
 
-  const res = await fetch(`/api/calls/list?${params}`);
+  const res = await fetch(`/api/calls?${params}`);
 
   if (!res.ok) {
     const errorData = await res.json();

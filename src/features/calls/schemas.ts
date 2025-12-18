@@ -11,18 +11,8 @@ export const callOutcomeSchema = z.enum([
 
 export const callSentimentSchema = z.enum(["positive", "neutral", "negative"]);
 
-const inputJsonValueSchema: z.ZodType<any> = z.lazy(() =>
-  z.union([
-    z.string(),
-    z.number(),
-    z.boolean(),
-    z.record(z.string(), z.lazy(() => z.union([inputJsonValueSchema, z.literal(null)]))),
-    z.array(z.lazy(() => z.union([inputJsonValueSchema, z.literal(null)]))),
-  ])
-);
-
-export const callIngestSchema = z.object({
-  call_id: z.string(),
+export const createCallSchema = z.object({
+  call_id: z.string().optional(),
   started_at: z.string().datetime().transform((str) => new Date(str)),
   transcript: z.string().optional().nullable().transform((val) => val ?? undefined),
   outcome: callOutcomeSchema,
@@ -32,13 +22,9 @@ export const callIngestSchema = z.object({
   initial_rate: z.number().optional().nullable().transform((val) => val ?? null),
   final_rate: z.number().optional().nullable().transform((val) => val ?? null),
   negotiation_rounds: z.number().int().optional().nullable().transform((val) => val ?? null),
-  raw_extracted: z.union([z.enum(["DbNull", "JsonNull"]), inputJsonValueSchema]).optional().transform((val) => {
-    if (val === "DbNull" || val === "JsonNull") return null;
-    return val;
-  }),
 });
 
-export type CallIngested = z.infer<typeof callIngestSchema>;
+export type CreateCallInput = z.infer<typeof createCallSchema>;
 
 /**
  * Schema para queries de listado de calls
