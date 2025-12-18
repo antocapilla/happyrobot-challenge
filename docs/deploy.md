@@ -31,9 +31,9 @@ Render.com is recommended because it provides automatic deployments and database
 3. **Configure environment variables**
    - In the Render dashboard, open the "happyrobot-app" service
    - Go to "Environment"
-   - Add variable:
-     - **Key**: `API_KEY`
-     - **Value**: Your preferred API key (e.g., `happyrobot-api-key`)
+   - Add variables:
+     - **Key**: `API_KEY` / **Value**: Your preferred API key (e.g., `happyrobot-api-key`)
+     - **Key**: `FMCSA_API_KEY` / **Value**: Your FMCSA API key (get from https://mobile.fmcsa.dot.gov/developer/home.xhtml)
    - Save
 
 4. **Wait for deployment**
@@ -88,6 +88,7 @@ docker build -t happyrobot-app .
 docker run -p 3000:3000 \
   -e DATABASE_URL="postgresql://user:pass@host:5432/db" \
   -e API_KEY="your-api-key" \
+  -e FMCSA_API_KEY="your-fmcsa-api-key" \
   happyrobot-app
 ```
 
@@ -110,6 +111,7 @@ Required environment variables:
 
 Optional:
 - `NODE_ENV` - Set to `production` in production (defaults to `production` in Docker)
+- `FMCSA_API_KEY` - FMCSA API key for carrier verification (defaults to `DEMO_KEY` if not set)
 
 ## Health Checks
 

@@ -15,6 +15,7 @@ docker-compose up -d db
 # 2. Create .env file
 echo 'DATABASE_URL="postgresql://postgres:postgres@localhost:5432/happyrobot"' > .env
 echo 'API_KEY="happyrobot-api-key"' >> .env
+echo 'FMCSA_API_KEY="your-fmcsa-api-key"' >> .env  # Get from https://mobile.fmcsa.dot.gov/developer/home.xhtml
 
 # 3. Install dependencies
 bun install
